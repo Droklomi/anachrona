@@ -695,6 +695,7 @@ setTimeout(() => {
                 <div className="ana-portrait-img-wrap">
                   {p.videoId ? (
   <iframe
+  title="Portrait vidéo"
     src={`https://www.youtube.com/embed/${p.videoId}?autoplay=0&controls=1&modestbranding=1&rel=0`}
     style={{width:'100%',height:'100%',border:'none',position:'absolute',inset:0, pointerEvents:'auto'}}    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope"
     allowFullScreen
