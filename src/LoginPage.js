@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
+import AnachronaLogo from './AnachronaLogo';
+
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap');
@@ -273,7 +275,7 @@ export default function LoginPage() {
           <button className="lp-back" onClick={()=>navigate('/')}>← Retour à l'accueil</button>
 
           <div className="lp-logo" onClick={()=>navigate('/')}>
-            <img src="/Anachrona_logo.png" alt="Anachrona" style={{height:'64px', width:'auto'}} onError={e=>{e.target.style.display='none'; e.target.nextSibling.style.display='block'}}/>
+            <AnachronaLogo onClick={()=>navigate('/')} size={38} />
             <span className="lp-logo-txt" style={{display:'none'}}>Anachrona</span>
           </div>
 

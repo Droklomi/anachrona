@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps';
 import worldData from 'world-atlas/countries-110m.json';
+import AnachronaLogo from './AnachronaLogo';
+import HeroParticles from './HeroParticles';
+import HeroHourglass from './HeroHourglass';
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap');
@@ -396,35 +399,48 @@ const styles = `
   .ana-portrait-card {
     cursor: pointer;
     opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.6s, transform 0.6s;
+    transform: translateY(40px);
+    transition: opacity 0.7s, transform 0.7s;
   }
 
   .ana-portrait-card.visible { opacity: 1; transform: translateY(0); }
 
   .ana-portrait-frame {
-    padding: clamp(8px,1.5vw,14px);
-    background: linear-gradient(145deg,#2e2210 0%,#1a1208 40%,#3a2a0e 70%,#1a1208 100%);
-    box-shadow: 0 0 0 1px rgba(201,168,76,0.25), 4px 6px 0 rgba(0,0,0,0.7), inset 0 0 0 1px rgba(201,168,76,0.08), 0 16px 48px rgba(0,0,0,0.7);
-    transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s;
+    padding: clamp(10px,1.5vw,16px);
+    background: linear-gradient(145deg,#3a2a0e 0%,#1a1208 30%,#2e2210 60%,#1a1005 100%);
+    box-shadow: 
+      0 0 0 1px rgba(201,168,76,0.4),
+      0 0 0 3px rgba(201,168,76,0.08),
+      4px 6px 0 rgba(0,0,0,0.7),
+      inset 0 0 0 1px rgba(201,168,76,0.15),
+      0 20px 60px rgba(0,0,0,0.8);
+    transition: transform 0.5s cubic-bezier(0.16,1,0.3,1), box-shadow 0.5s;
     position: relative;
   }
 
-  .ana-portrait-frame::before { content:''; position:absolute; top:5px; left:5px; width:14px; height:14px; border-top:1px solid var(--or-sombre); border-left:1px solid var(--or-sombre); opacity:0.7; z-index:2; }
-  .ana-portrait-frame::after { content:''; position:absolute; bottom:5px; right:5px; width:14px; height:14px; border-bottom:1px solid var(--or-sombre); border-right:1px solid var(--or-sombre); opacity:0.7; z-index:2; }
+  .ana-portrait-frame::before { content:''; position:absolute; top:6px; left:6px; width:20px; height:20px; border-top:2px solid rgba(201,168,76,0.7); border-left:2px solid rgba(201,168,76,0.7); opacity:0.9; z-index:2; }
+  .ana-portrait-frame::after { content:''; position:absolute; bottom:6px; right:6px; width:20px; height:20px; border-bottom:2px solid rgba(201,168,76,0.7); border-right:2px solid rgba(201,168,76,0.7); opacity:0.9; z-index:2; }
 
-  .ana-portrait-card:hover .ana-portrait-frame { transform:translateY(-10px); box-shadow:0 0 0 1px rgba(201,168,76,0.5),6px 8px 0 rgba(0,0,0,0.6),0 30px 80px rgba(0,0,0,0.7),0 0 40px rgba(201,168,76,0.08); }
+  .ana-portrait-card:hover .ana-portrait-frame { 
+    transform:translateY(-14px) scale(1.02); 
+    box-shadow:
+      0 0 0 1px rgba(201,168,76,0.8),
+      0 0 0 3px rgba(201,168,76,0.15),
+      6px 8px 0 rgba(0,0,0,0.6),
+      0 0 40px rgba(201,168,76,0.25),
+      0 0 80px rgba(201,168,76,0.1),
+      0 40px 100px rgba(0,0,0,0.8);
+  }
 
-  .ana-portrait-img-wrap { position:relative; aspect-ratio:3/4; overflow:hidden; background:#1A1208; }
-  .ana-portrait-img { width:100%; height:100%; object-fit:cover; filter:sepia(40%) contrast(1.1) brightness(0.8) saturate(0.8); transition:filter 0.5s,transform 0.5s; }
-  .ana-portrait-card:hover .ana-portrait-img { filter:sepia(15%) contrast(1.15) brightness(0.95); transform:scale(1.06); }
-  .ana-portrait-overlay { position:absolute; inset:0; background:linear-gradient(to top,rgba(9,9,15,0.92) 0%,rgba(9,9,15,0.3) 45%,transparent 100%); display:flex; flex-direction:column; justify-content:flex-end; padding:clamp(10px,2vw,18px); }
-  .ana-portrait-play { width:36px; height:36px; border:1px solid var(--or); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:10px; opacity:0; transform:translateY(8px); transition:opacity 0.3s,transform 0.3s; }
+ .ana-portrait-img-wrap { position:relative; aspect-ratio:3/4; overflow:hidden; background:#1A1208; }
+  .ana-portrait-img { width:100%; height:100%; object-fit:cover; filter:sepia(45%) contrast(1.15) brightness(0.75) saturate(0.7); transition:filter 0.6s,transform 0.6s; }
+  .ana-portrait-card:hover .ana-portrait-img { filter:sepia(10%) contrast(1.2) brightness(1.0); transform:scale(1.08); }
+  .ana-portrait-overlay { position:absolute; inset:0; background:linear-gradient(to top,rgba(9,9,15,0.95) 0%,rgba(9,9,15,0.4) 40%,transparent 100%); display:flex; flex-direction:column; justify-content:flex-end; padding:clamp(10px,2vw,18px); }
+  .ana-portrait-play { width:40px; height:40px; border:1px solid var(--or); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:10px; opacity:0; transform:translateY(10px); transition:opacity 0.4s,transform 0.4s; background:rgba(201,168,76,0.1); }
   .ana-portrait-card:hover .ana-portrait-play { opacity:1; transform:translateY(0); }
-  .ana-portrait-era { font-family:'Cinzel',serif; font-size:clamp(0.45rem,1vw,0.55rem); letter-spacing:0.3em; text-transform:uppercase; color:var(--or); opacity:0.8; margin-bottom:4px; }
-  .ana-portrait-name { font-family:'Cinzel',serif; font-size:clamp(0.7rem,1.5vw,0.9rem); color:var(--ivoire); letter-spacing:0.05em; line-height:1.3; }
+  .ana-portrait-era { font-family:'Cinzel',serif; font-size:clamp(0.45rem,1vw,0.55rem); letter-spacing:0.3em; text-transform:uppercase; color:var(--or); opacity:0.9; margin-bottom:4px; }
+  .ana-portrait-name { font-family:'Cinzel',serif; font-size:clamp(0.7rem,1.5vw,0.95rem); color:var(--ivoire); letter-spacing:0.05em; line-height:1.3; }
   .ana-portrait-duration { font-style:italic; font-size:0.78rem; color:var(--ivoire-sombre); opacity:0.7; margin-top:3px; }
-
   /* VILLES */
   .ana-villes {
     padding: clamp(60px,10vw,130px) 5%;
@@ -533,8 +549,7 @@ const styles = `
 
   .ana-reveal { opacity:0; transform:translateY(30px); transition:opacity 0.7s cubic-bezier(0.16,1,0.3,1),transform 0.7s cubic-bezier(0.16,1,0.3,1); }
   .ana-reveal.visible { opacity:1; transform:translateY(0); }
-  .ana-cta-center { text-align:center; margin-top:clamp(40px,5vw,64px); }
-
+.ana-cta-center { text-align:center; margin-top:clamp(40px,5vw,64px); width:100%; display:block; }
   @media (max-width:1024px) {
     .ana-portraits-grid { grid-template-columns:repeat(2,1fr); }
     .ana-fiction-grid { grid-template-columns:repeat(2,1fr); }
@@ -553,10 +568,10 @@ const styles = `
 `;
 
 const portraits = [
-  { name:"Napoléon Bonaparte", era:"Empire Français · 1769–1821", img:"https://images.unsplash.com/photo-1599946347371-68eb71b16afc?w=400&q=80" },
-  { name:"Cléopâtre VII", era:"Égypte Antique · 69–30 av. J.-C.", img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80" },
-  { name:"Jules César", era:"République Romaine · 100–44 av. J.-C.", img:"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80" },
-  { name:"Aliénor d'Aquitaine", era:"Moyen Âge · 1122–1204", img:"https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80" },
+ { name:"Napoléon Bonaparte", era:"Empire Français · 1769–1821", img:"https://images.unsplash.com/photo-1599946347371-68eb71b16afc?w=400&q=80", videoId:null },
+{ name:"Cléopâtre VII", era:"Égypte Antique · 69–30 av. J.-C.", img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80", videoId:null },
+{ name:"Jules César", era:"République Romaine · 100–44 av. J.-C.", img:"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80", videoId:null },
+  { name:"Marie-Antoinette", era:"Royaume de France · 1755–1793", img:"https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80", videoId:"ybgrOEqDkNs" },
 ];
 
 const homeCities = [
@@ -597,8 +612,9 @@ export default function Homepage() {
       });
     }, { threshold: 0.12 });
 
-    document.querySelectorAll('.ana-reveal, .ana-portrait-card, .ana-fiction-card').forEach(el => observer.observe(el));
-
+setTimeout(() => {
+  document.querySelectorAll('.ana-reveal, .ana-portrait-card, .ana-fiction-card').forEach(el => observer.observe(el));
+}, 100);
     return () => {
       window.removeEventListener('scroll', handleScroll);
       observer.disconnect();
@@ -613,7 +629,8 @@ export default function Homepage() {
 
       <nav className={`ana-nav ${scrolled ? 'scrolled' : ''}`}>
         <span onClick={() => navigate('/')} style={{cursor:'pointer'}}>
-  <img src="/Anachrona_logo.png" alt="Anachrona" style={{height:'44px', width:'auto'}} />
+  <AnachronaLogo onClick={()=>navigate('/')} size={38} />
+
 </span>
         <ul className="ana-nav-links">
           <li><a href="#portraits">Les Portraits</a></li>
@@ -637,6 +654,7 @@ export default function Homepage() {
       </div>
 
       <section className="ana-hero">
+        <HeroParticles />
         <div className="ana-hero-bg" />
         <div className="ana-hero-ring" />
         <div className="ana-hero-ring" />
@@ -645,6 +663,7 @@ export default function Homepage() {
         ))}
         <div className="ana-hero-content">
           <p className="ana-eyebrow">✦ L'Histoire Prend Vie ✦</p>
+          <HeroHourglass />
           <h1 className="ana-hero-title"><span className="ana-gold">Ana</span>chrona</h1>
           <div className="ana-divider">
             <div className="ana-div-line" /><div className="ana-div-gem-sm" /><div className="ana-div-gem" /><div className="ana-div-gem-sm" /><div className="ana-div-line r" />
@@ -652,7 +671,6 @@ export default function Homepage() {
           <p className="ana-subtitle">Traversez les siècles grâce à des vidéos créées par intelligence artificielle. Portraits d'empereurs, villes disparues, uchronies… le passé ne dort jamais.</p>
           <div className="ana-hero-actions">
             <a href="#portraits" className="ana-btn-primary">Explorer l'Histoire</a>
-            <a href="#premium" className="ana-btn-secondary">Découvrir Premium</a>
           </div>
         </div>
         <div className="ana-scroll-indicator">
@@ -675,23 +693,31 @@ export default function Homepage() {
             <div key={i} className="ana-portrait-card" style={cardDelay(i)}>
               <div className="ana-portrait-frame">
                 <div className="ana-portrait-img-wrap">
-                  <img className="ana-portrait-img" src={p.img} alt={p.name} />
-                  <div className="ana-portrait-overlay">
-                    <div className="ana-portrait-play">
-                      <svg width="12" height="14" viewBox="0 0 10 12" fill="var(--or)"><path d="M0 0 L10 6 L0 12 Z"/></svg>
-                    </div>
-                    <span className="ana-portrait-era">{p.era}</span>
-                    <div className="ana-portrait-name">{p.name}</div>
-                    <div className="ana-portrait-duration">1 min · Vidéo IA</div>
-                  </div>
+                  {p.videoId ? (
+  <iframe
+    src={`https://www.youtube.com/embed/${p.videoId}?autoplay=0&controls=1&modestbranding=1&rel=0`}
+    style={{width:'100%',height:'100%',border:'none',position:'absolute',inset:0, pointerEvents:'auto'}}    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope"
+    allowFullScreen
+  />
+) : (
+  <img className="ana-portrait-img" src={p.img} alt={p.name} />
+)}
+                  {!p.videoId && <div className="ana-portrait-overlay">
+  <div className="ana-portrait-play">
+    <svg width="12" height="14" viewBox="0 0 10 12" fill="var(--or)"><path d="M0 0 L10 6 L0 12 Z"/></svg>
+  </div>
+  <span className="ana-portrait-era">{p.era}</span>
+  <div className="ana-portrait-name">{p.name}</div>
+  <div className="ana-portrait-duration">1 min · Vidéo IA</div>
+</div>}
                 </div>
               </div>
             </div>
           ))}
         </div>
-        <div className="ana-cta-center ana-reveal">
-  <button onClick={()=>navigate('/galerie')} className="ana-btn-secondary">Voir toute la galerie</button>
-      </div>
+        <div className="ana-cta-center">
+          <button onClick={()=>navigate('/galerie')} className="ana-btn-secondary">Voir toute la galerie</button>
+        </div>
       </section>
 
       {/* VILLES avec vraie carte */}
@@ -811,7 +837,7 @@ export default function Homepage() {
         <div className="ana-footer-top">
           <div>
             <span onClick={() => navigate('/')} style={{cursor:'pointer'}}>
-  <img src="/Anachrona_logo.png" alt="Anachrona" style={{height:'44px', width:'auto'}} />
+  <AnachronaLogo onClick={()=>navigate('/')} size={38} />
 </span>
             <p className="ana-footer-tagline">L'Histoire prend vie grâce à l'intelligence artificielle.</p>
           </div>

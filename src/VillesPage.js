@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from 'react-simple-maps';
 import worldData from 'world-atlas/countries-110m.json';
+import AnachronaLogo from './AnachronaLogo';
 
 const CITIES = [
   { id:1,  name:"Paris",          country:"France",       era:"Second Empire · 1853",         free:true,  coordinates:[2.35,48.85],   desc:"Sous Haussmann, Paris se métamorphose. Les ruelles médiévales cèdent aux grands boulevards dorés par le soleil.", duration:"8 min",  year:"1853–1870",             population:"1,8 million",  img:"https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=80" },
@@ -129,7 +130,7 @@ console.log('profile reçu:', profile);
     <>
       <style>{styles}</style>
       <nav className="vn">
-        <span className="vn-logo" onClick={()=>navigate('/')}>Anachrona</span>
+        <AnachronaLogo onClick={()=>navigate('/')} size={38} />
         <ul className="vn-links">
           <li><a onClick={()=>navigate('/')}>Accueil</a></li>
           <li><a onClick={()=>navigate('/')}>Les Portraits</a></li>

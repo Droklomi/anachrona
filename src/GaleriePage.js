@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AnachronaLogo from './AnachronaLogo';
+
 
 const PORTRAITS = [
   { id:1,  name:"Napoléon Bonaparte",    epoque:"Époque Moderne",      civilisation:"France",           destin:"Conquérant",    years:"1769–1821",        country:"France",            desc:"Général, Premier Consul, Empereur des Français. Napoléon remodela l'Europe entière selon sa volonté de fer et son génie militaire sans égal.", img:"https://images.unsplash.com/photo-1599946347371-68eb71b16afc?w=600&q=80",  free:true,  duration:"8 min"  },
@@ -215,7 +217,7 @@ export default function GaleriePage() {
       <style>{styles}</style>
 
       <nav className="gn">
-        <span className="gn-logo" onClick={()=>navigate('/')}>Anachrona</span>
+        <AnachronaLogo onClick={()=>navigate('/')} size={38} />
         <ul className="gn-links">
           <li><a onClick={()=>navigate('/')}>Accueil</a></li>
           <li><a style={{color:'var(--or)'}}>Les Portraits</a></li>

@@ -1,6 +1,7 @@
 import PremiumGate from './PremiumGate';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AnachronaLogo from './AnachronaLogo';
 
 const UCHRONIES = [
   {
@@ -422,7 +423,7 @@ export default function UchroniesPage({ user, profile }) {
       <style>{styles}</style>
 
       <nav className="un">
-        <span className="un-logo" onClick={()=>navigate('/')}>Anachrona</span>
+        <AnachronaLogo onClick={()=>navigate('/')} size={38} />
         <ul className="un-links">
           <li><a onClick={()=>navigate('/')}>Accueil</a></li>
           <li><a onClick={()=>navigate('/galerie')}>Les Portraits</a></li>
