@@ -7,6 +7,7 @@ import CataloguePage from './CataloguePage';
 import MythologiePage from './MythologiePage';
 import UchroniesPage from './UchroniesPage';
 import LoginPage from './LoginPage';
+import Homepage from './Homepage';
 
 function PrivateRoute({ user, profile, children }) {
   if (user === undefined) return null;
@@ -62,7 +63,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<CataloguePage user={user} profile={profile} />} />
+        <Route path="/" element={<Homepage user={user} profile={profile} />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/galerie" element={<GaleriePage user={user} profile={profile} />} />
         <Route path="/catalogue" element={<CataloguePage user={user} profile={profile} />} />
