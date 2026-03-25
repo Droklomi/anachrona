@@ -172,8 +172,10 @@ body::after {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: center;
+  align-items: center;
   padding: 24px;
+  text-align: center;
   border: 1px solid rgba(255,255,255,0.06);
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
@@ -191,16 +193,7 @@ body::after {
   inset: 0;
   background: linear-gradient(160deg, transparent 0%, rgba(10,10,8,0.85) 70%);
 }
-.hub-card-bar {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  transition: opacity 0.3s;
-  opacity: 0.6;
-}
-.hub-card:hover .hub-card-bar { opacity: 1; }
+.hub-card-bar { display: none; }
 .hub-card-content {
   position: relative;
   z-index: 1;
