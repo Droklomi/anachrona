@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps';
 import worldData from 'world-atlas/countries-110m.json';
 import AnachronaLogo from './AnachronaLogo';
+import TikTokFooter from './TikTokFooter';
 import HeroParticles from './HeroParticles';
 import HeroHourglass from './HeroHourglass';
 
@@ -833,6 +834,8 @@ setTimeout(() => {
           </div>
 <button onClick={()=>navigate('/login')} className="ana-btn-primary" style={{fontSize:'0.72rem',padding:'16px 48px'}}>Commencer l'aventure</button>        </div>
       </section>
+
+      <TikTokFooter />
 
       <footer className="ana-footer">
         <div className="ana-footer-top">

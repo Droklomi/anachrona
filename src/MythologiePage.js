@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AnachronaLogo from './AnachronaLogo';
+import TikTokFooter from './TikTokFooter';
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
@@ -471,6 +472,9 @@ export default function MythologiePage({ user, profile }) {
           </div>
         </div>
       )}
+
+      {/* TIKTOK FOOTER */}
+      <TikTokFooter />
 
       {/* FOOTER */}
       <div className="mfoot">

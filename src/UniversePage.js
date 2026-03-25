@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useParams, Navigate } from 'react-router-dom';
 import AnachronaLogo from './AnachronaLogo';
 import { UNIVERSE_COLORS, UNIVERSES, CHARACTERS } from './data';
+import TikTokFooter from './TikTokFooter';
 
 /* ─────────────────────────────────────────────
    ERA CLASSIFICATION
@@ -785,6 +786,32 @@ function DetailPanel({ char, onClose, onSelect, isPremium }) {
           </>
         )}
 
+        <hr className="dp-divider" />
+        <div className="dp-section" style={{ paddingBottom: '8px' }}>
+          <a
+            href="https://www.tiktok.com/@anachrona.fr"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              textDecoration: 'none',
+              color: 'rgba(232,220,200,0.55)',
+              fontFamily: "'EB Garamond', serif",
+              fontStyle: 'italic',
+              fontSize: '13px',
+              transition: 'color 0.2s',
+            }}
+            onMouseEnter={e => e.currentTarget.style.color = '#c9a84c'}
+            onMouseLeave={e => e.currentTarget.style.color = 'rgba(232,220,200,0.55)'}
+          >
+            <svg width="16" height="16" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0 }}>
+              <path d="M21.5 2h-3.8v19.1a3.7 3.7 0 0 1-3.7 3.7 3.7 3.7 0 0 1-3.7-3.7 3.7 3.7 0 0 1 3.7-3.7c.36 0 .7.05 1.03.14V13.6a7.55 7.55 0 0 0-1.03-.07 7.5 7.5 0 0 0-7.5 7.5 7.5 7.5 0 0 0 7.5 7.5 7.5 7.5 0 0 0 7.5-7.5V11.4a11.1 11.1 0 0 0 6.5 2.1V9.7A7.3 7.3 0 0 1 21.5 2Z" fill="currentColor" />
+            </svg>
+            Retrouvez {char.name} sur @anachrona.fr
+          </a>
+        </div>
         <div className="dp-bottom-pad" />
       </div>
     </div>
@@ -944,6 +971,9 @@ export default function UniversePage({ user, profile }) {
           </div>
         ))}
       </div>
+
+      {/* TIKTOK FOOTER */}
+      <TikTokFooter />
 
       {/* FOOTER */}
       <footer className="hfooter">
