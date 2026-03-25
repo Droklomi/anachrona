@@ -65,26 +65,23 @@ body::after {
   backdrop-filter: blur(12px);
 }
 .hn-logo { cursor: pointer; display: flex; align-items: center; }
-.hn-links {
-  display: flex;
-  list-style: none;
-  gap: 32px;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-}
-.hn-links li {
-  font-family: 'Cinzel', serif;
-  font-size: 13px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(232,220,200,0.65);
-  cursor: pointer;
-  transition: color 0.2s;
-}
-.hn-links li.active { color: #c9a84c; }
-.hn-links li:hover { color: #e8c96a; }
 .hn-right { display: flex; align-items: center; gap: 12px; }
+.hn-btn-shuffle {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  padding: 8px 18px;
+  border: 1px solid rgba(232,220,200,0.3);
+  border-radius: 6px;
+  cursor: pointer;
+  background: transparent;
+  color: rgba(232,220,200,0.8);
+  transition: border-color 0.2s, color 0.2s;
+}
+.hn-btn-shuffle:hover {
+  border-color: #c9a84c;
+  color: #c9a84c;
+}
 .hn-btn-myth {
   font-family: 'Cinzel', serif;
   font-size: 12px;
@@ -698,7 +695,6 @@ body::after {
 /* RESPONSIVE */
 @media (max-width: 768px) {
   .hn { padding: 0 20px; }
-  .hn-links { display: none; }
   .hh-content { padding: 0 24px 60px; }
   .hub { padding: 40px 20px 28px; }
   .hs { padding: 0 20px 36px; }
@@ -917,14 +913,10 @@ export default function CataloguePage({ user, profile }) {
         <div className="hn-logo" onClick={() => navigate('/')}>
           <AnachronaLogo />
         </div>
-        <ul className="hn-links">
-          <li className="active">Histoire</li>
-          <li>Civilisations</li>
-          <li>Batailles</li>
-          <li>Ma Liste</li>
-          <li onClick={() => navigate('/shuffle')} style={{ cursor: 'pointer' }}>Shuffle</li>
-        </ul>
         <div className="hn-right">
+          <button className="hn-btn-shuffle" onClick={() => navigate('/shuffle')}>
+            ▶ Shuffle
+          </button>
           <button className="hn-btn-myth" onClick={() => navigate('/mythologie')}>
             ✦ Mythologie
           </button>
