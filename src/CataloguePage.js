@@ -885,6 +885,7 @@ export default function CataloguePage({ user, profile }) {
 
       {/* HERO UNIVERS */}
       <section className="hub">
+        <p className="hub-tagline">✦ Choisissez votre univers ✦</p>
         <div className="hub-grid">
           {UNIVERSES.map(u => (
             <div
