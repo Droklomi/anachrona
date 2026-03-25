@@ -888,7 +888,6 @@ export default function CataloguePage({ user, profile }) {
         <div className="hub-header">
           <p className="hub-tagline">✦ Choisissez votre univers ✦</p>
           <h1 className="hub-title">Anachrona</h1>
-          <p className="hub-sub">L'Histoire vivante, à portée de main.</p>
         </div>
         <div className="hub-grid">
           {UNIVERSES.map(u => (
