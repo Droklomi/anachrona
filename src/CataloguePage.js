@@ -916,7 +916,7 @@ export default function CataloguePage({ user, profile }) {
             onClick={() => navigate('/mythologie')}
             onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 12px 40px rgba(124,58,237,0.35), inset 0 0 0 1px rgba(167,139,250,0.5)'; e.currentTarget.style.borderColor = 'rgba(167,139,250,0.3)'; }}
             onMouseLeave={e => { e.currentTarget.style.boxShadow = 'inset 0 0 0 1px rgba(124,58,237,0.2)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'; }}
-            style={{ boxShadow: 'inset 0 0 0 1px rgba(124,58,237,0.2)' }}
+            style={{ boxShadow: 'inset 0 0 0 1px rgba(124,58,237,0.2)', height: '80px' }}
           >
             <div className="hub-card-bg" style={{ backgroundColor: 'rgba(124,58,237,0.12)', backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Ccircle cx='40' cy='40' r='25' fill='none' stroke='rgba(167%2C139%2C250%2C.07)' stroke-width='1'/%3E%3Cpath d='M40 15 L43 30 L58 30 L46 39 L50 54 L40 45 L30 54 L34 39 L22 30 L37 30 Z' fill='none' stroke='rgba(167%2C139%2C250%2C.06)' stroke-width='1'/%3E%3C/svg%3E")`, backgroundSize: '160px 160px', opacity: 0.5 }} />
             <div className="hub-card-grad" style={{ background: 'linear-gradient(160deg, transparent 0%, rgba(5,4,18,0.9) 70%)' }} />
