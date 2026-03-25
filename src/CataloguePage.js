@@ -221,10 +221,15 @@ body::after {
   color: rgba(232,220,200,0.55);
   line-height: 1.4;
 }
+.hub-card-myth {
+  grid-column: 1 / -1;
+  height: 80px;
+}
 @media (max-width: 768px) {
   .hub { padding: 100px 16px 48px; gap: 32px; }
   .hub-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .hub-card { height: 140px; padding: 16px; }
+  .hub-card-myth { height: 70px; }
 }
 
 /* CHARACTER ROWS */
@@ -873,9 +878,6 @@ export default function CataloguePage({ user, profile }) {
           <button className="hn-btn-shuffle" onClick={() => navigate('/shuffle')}>
             ▶ Shuffle
           </button>
-          <button className="hn-btn-myth" onClick={() => navigate('/mythologie')}>
-            ✦ Mythologie
-          </button>
           <button className="hn-btn-premium" onClick={() => navigate(user ? '/compte' : '/premium')}>
             {user ? 'Mon Compte' : 'Devenir Premium'}
           </button>
@@ -908,6 +910,22 @@ export default function CataloguePage({ user, profile }) {
               </div>
             </div>
           ))}
+          {/* MYTHOLOGIE — pleine largeur */}
+          <div
+            className="hub-card hub-card-myth"
+            onClick={() => navigate('/mythologie')}
+            onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 12px 40px rgba(124,58,237,0.35), inset 0 0 0 1px rgba(167,139,250,0.5)'; e.currentTarget.style.borderColor = 'rgba(167,139,250,0.3)'; }}
+            onMouseLeave={e => { e.currentTarget.style.boxShadow = 'inset 0 0 0 1px rgba(124,58,237,0.2)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'; }}
+            style={{ boxShadow: 'inset 0 0 0 1px rgba(124,58,237,0.2)' }}
+          >
+            <div className="hub-card-bg" style={{ backgroundColor: 'rgba(124,58,237,0.12)', backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Ccircle cx='40' cy='40' r='25' fill='none' stroke='rgba(167%2C139%2C250%2C.07)' stroke-width='1'/%3E%3Cpath d='M40 15 L43 30 L58 30 L46 39 L50 54 L40 45 L30 54 L34 39 L22 30 L37 30 Z' fill='none' stroke='rgba(167%2C139%2C250%2C.06)' stroke-width='1'/%3E%3C/svg%3E")`, backgroundSize: '160px 160px', opacity: 0.5 }} />
+            <div className="hub-card-grad" style={{ background: 'linear-gradient(160deg, transparent 0%, rgba(5,4,18,0.9) 70%)' }} />
+            <div className="hub-card-bar" style={{ background: 'linear-gradient(to bottom, #A78BFA, #7C3AED)' }} />
+            <div className="hub-card-content">
+              <div className="hub-card-name" style={{ color: '#c4b5fd' }}>✦ Mythologie</div>
+              <div className="hub-card-sub">Dieux, héros et créatures de la légende</div>
+            </div>
+          </div>
         </div>
       </section>
 
