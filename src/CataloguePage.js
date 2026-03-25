@@ -117,98 +117,6 @@ body::after {
   box-shadow: 0 0 20px rgba(201,168,76,0.5);
 }
 
-/* HERO */
-.hh {
-  position: relative;
-  height: 100vh;
-  min-height: 600px;
-  overflow: hidden;
-  display: flex;
-  align-items: flex-end;
-}
-.hh-bg {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center top;
-  filter: brightness(0.38) saturate(0.6);
-  animation: hzoom 28s ease-in-out infinite alternate;
-  transform-origin: center center;
-}
-@keyframes hzoom {
-  from { transform: scale(1); }
-  to { transform: scale(1.1); }
-}
-.hh-grad {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(to right, rgba(13,13,10,0.92) 0%, rgba(13,13,10,0.55) 50%, rgba(13,13,10,0.1) 100%),
-    linear-gradient(to top, rgba(13,13,10,0.98) 0%, rgba(13,13,10,0.4) 35%, transparent 70%);
-}
-.hh-content {
-  position: relative;
-  z-index: 2;
-  padding: 0 64px 80px;
-  max-width: 620px;
-}
-.hh-badge {
-  display: inline-block;
-  font-family: 'Cinzel', serif;
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  color: #c9a84c;
-  border: 1px solid rgba(201,168,76,0.5);
-  padding: 5px 14px;
-  margin-bottom: 20px;
-  text-transform: uppercase;
-}
-.hh-title {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: clamp(42px, 7vw, 88px);
-  font-weight: 900;
-  color: #fff;
-  line-height: 1.0;
-  margin-bottom: 16px;
-  text-shadow: 0 2px 30px rgba(0,0,0,0.8);
-}
-.hh-sub {
-  font-family: 'EB Garamond', serif;
-  font-style: italic;
-  font-size: 18px;
-  color: rgba(232,220,200,0.75);
-  margin-bottom: 32px;
-  line-height: 1.5;
-}
-.hh-actions { display: flex; gap: 14px; flex-wrap: wrap; }
-.hh-btn-watch {
-  font-family: 'Cinzel', serif;
-  font-size: 13px;
-  letter-spacing: 0.12em;
-  padding: 13px 32px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  background: linear-gradient(135deg, #c9a84c, #e8c96a);
-  color: #0d0d0a;
-  font-weight: 700;
-  transition: transform 0.2s, box-shadow 0.3s;
-}
-.hh-btn-watch:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,168,76,0.45); }
-.hh-btn-list {
-  font-family: 'Cinzel', serif;
-  font-size: 13px;
-  letter-spacing: 0.12em;
-  padding: 13px 32px;
-  border: 1px solid rgba(232,220,200,0.5);
-  border-radius: 4px;
-  cursor: pointer;
-  background: transparent;
-  color: #e8dcc8;
-  transition: border-color 0.2s, background 0.2s;
-}
-.hh-btn-list:hover { border-color: #c9a84c; background: rgba(201,168,76,0.08); }
-
 /* UNIVERSE BAND */
 .hub {
   padding: 56px 48px 40px;
@@ -695,7 +603,6 @@ body::after {
 /* RESPONSIVE */
 @media (max-width: 768px) {
   .hn { padding: 0 20px; }
-  .hh-content { padding: 0 24px 60px; }
   .hub { padding: 40px 20px 28px; }
   .hs { padding: 0 20px 36px; }
   .hsep { margin: 20px 20px 36px; }
