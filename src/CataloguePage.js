@@ -178,7 +178,7 @@ const DA = {
   'rois-france': {
     bg: '#04070E',
     bgImg: null,
-    pattern: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Ctext x='40' y='56' text-anchor='middle' font-size='44' fill='rgba(74%2C114%2C184%2C.09)'%3E%E2%9A%9C%3C/text%3E%3C/svg%3E")`,
+    pattern: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath d='M18 54 L18 36 L28 44 L40 20 L52 44 L62 36 L62 54 Z' fill='none' stroke='rgba(74%2C114%2C184%2C.13)' stroke-width='1.3'/%3E%3Crect x='16' y='54' width='48' height='6' rx='1.5' fill='none' stroke='rgba(74%2C114%2C184%2C.1)' stroke-width='1'/%3E%3Ccircle cx='40' cy='20' r='2.5' fill='rgba(74%2C114%2C184%2C.12)'/%3E%3Ccircle cx='18' cy='36' r='2' fill='rgba(74%2C114%2C184%2C.1)'/%3E%3Ccircle cx='62' cy='36' r='2' fill='rgba(74%2C114%2C184%2C.1)'/%3E%3C/svg%3E")`,
     glow: `radial-gradient(ellipse at 50% 40%,rgba(74,114,184,.18) 0%,transparent 60%)`,
     accent: '#4A72B8', titleColor: '#90B0E0',
     label: '⚜  MONARCHIE FRANÇAISE  ⚜', sublabel: 'Rex Francorum · La Couronne Capétienne', deco: '⚜',
@@ -187,7 +187,7 @@ const DA = {
   'femmes-pouvoir': {
     bg: '#0A0408',
     bgImg: null,
-    pattern: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='70'%3E%3Ctext x='35' y='50' text-anchor='middle' font-size='36' fill='rgba(160%2C82%2C138%2C.09)'%3E%E2%9C%BF%3C/text%3E%3C/svg%3E")`,
+    pattern: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='70'%3E%3Ccircle cx='35' cy='32' r='10' fill='none' stroke='rgba(160%2C82%2C138%2C.12)' stroke-width='1'/%3E%3Ccircle cx='35' cy='20' r='6' fill='none' stroke='rgba(160%2C82%2C138%2C.1)' stroke-width='1'/%3E%3Ccircle cx='47' cy='26' r='6' fill='none' stroke='rgba(160%2C82%2C138%2C.1)' stroke-width='1'/%3E%3Ccircle cx='47' cy='38' r='6' fill='none' stroke='rgba(160%2C82%2C138%2C.1)' stroke-width='1'/%3E%3Ccircle cx='35' cy='44' r='6' fill='none' stroke='rgba(160%2C82%2C138%2C.1)' stroke-width='1'/%3E%3Ccircle cx='23' cy='38' r='6' fill='none' stroke='rgba(160%2C82%2C138%2C.1)' stroke-width='1'/%3E%3Ccircle cx='23' cy='26' r='6' fill='none' stroke='rgba(160%2C82%2C138%2C.1)' stroke-width='1'/%3E%3Cline x1='35' y1='42' x2='35' y2='58' stroke='rgba(160%2C82%2C138%2C.09)' stroke-width='1'/%3E%3C/svg%3E")`,
     glow: `radial-gradient(ellipse at 60% 50%,rgba(160,82,138,.18) 0%,transparent 60%)`,
     accent: '#A0528A', titleColor: '#D890C0',
     label: '♛  RÉGINES & IMPÉRATRICES  ♛', sublabel: "Celles qui ont gouverné l'Histoire", deco: '♛',
