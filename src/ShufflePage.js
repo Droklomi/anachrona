@@ -12,11 +12,13 @@ const styles = `
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 .sf-outer {
-  height: 100dvh;
+  position: fixed;
+  inset: 0;
   overflow-y: scroll;
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
+  z-index: 1;
 }
 
 .sf-slide {
