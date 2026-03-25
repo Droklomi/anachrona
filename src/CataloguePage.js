@@ -916,6 +916,7 @@ export default function CataloguePage({ user, profile }) {
           <li>Civilisations</li>
           <li>Batailles</li>
           <li>Ma Liste</li>
+          <li onClick={() => navigate('/shuffle')} style={{ cursor: 'pointer' }}>Shuffle</li>
         </ul>
         <div className="hn-right">
           <button className="hn-btn-myth" onClick={() => navigate('/mythologie')}>

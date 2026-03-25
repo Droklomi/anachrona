@@ -80,6 +80,7 @@ export const CHARACTERS = [
     is_premium: false,
     isNew: false,
     duration: '1:02',
+    youtubeId: null,
     img: 'https://picsum.photos/seed/jules-cesar-portrait/400/600',
     heroImg: 'https://picsum.photos/seed/rome-colosseum/1600/900',
     bio: "Général et homme d'État romain, Jules César transforma la République en Empire par la force de son génie militaire et politique. Ses conquêtes des Gaules étendirent Rome jusqu'aux confins de l'Europe, forgeant une légende qui résonne encore deux millénaires plus tard. Assassiné aux Ides de Mars 44 av. J-C, il devint le symbole éternel du pouvoir absolu et de la trahison.",
@@ -94,6 +95,7 @@ export const CHARACTERS = [
     is_premium: false,
     isNew: true,
     duration: '0:58',
+    youtubeId: null,
     img: 'https://picsum.photos/seed/marie-antoinette-portrait/400/600',
     heroImg: null,
     bio: "Archiduchesse d'Autriche devenue reine de France à dix-neuf ans, Marie-Antoinette incarna l'éclat et les excès de Versailles dans une époque de bouleversements. Son destin bascula avec la Révolution française, transformant la reine en symbole de l'Ancien Régime aux yeux d'un peuple affamé. Guillotinée en 1793, elle laisse une image ambivalente, entre victime d'un système et actrice de sa propre tragédie.",
@@ -108,6 +110,7 @@ export const CHARACTERS = [
     is_premium: false,
     isNew: false,
     duration: '0:55',
+    youtubeId: null,
     img: 'https://picsum.photos/seed/louis-xvi-portrait/400/600',
     heroImg: null,
     bio: "Dernier roi de France de l'Ancien Régime, Louis XVI accéda au trône dans un royaume au bord de la banqueroute et de la révolte sociale. Homme sincère mais indécis, il tenta des réformes sans pouvoir endiguer la vague révolutionnaire qui balaya son règne. Jugé et décapité en janvier 1793, il reste le symbole d'une monarchie incapable de se réinventer face au souffle de l'Histoire.",
@@ -122,6 +125,7 @@ export const CHARACTERS = [
     is_premium: false,
     isNew: false,
     duration: '1:05',
+    youtubeId: null,
     img: 'https://picsum.photos/seed/louis-xiv-portrait/400/600',
     heroImg: null,
     bio: "Surnommé le Roi-Soleil, Louis XIV régna soixante-douze ans sur la France, le règne le plus long de l'histoire monarchique européenne. Il fit de Versailles le centre du monde civilisé, concentrant toute l'autorité en sa personne et imposant la grandeur française à l'Europe entière. Son absolutisme rayonnant redessina la carte politique du continent tout en façonnant une culture et un art qui influencent encore notre époque.",
@@ -136,6 +140,7 @@ export const CHARACTERS = [
     is_premium: false,
     isNew: false,
     duration: '1:00',
+    youtubeId: null,
     img: 'https://picsum.photos/seed/charlemagne-portrait/400/600',
     heroImg: null,
     bio: "Roi des Francs puis premier Empereur d'Occident couronné en l'an 800, Charlemagne unifia une grande partie de l'Europe sous sa bannière par la force des armes et de la foi chrétienne. Il entreprit une renaissance culturelle sans précédent, favorisant l'éducation et les arts dans un monde sorti à peine des ténèbres du Haut Moyen Âge. Père de l'Europe moderne selon certains historiens, son empire posa les fondations des nations françaises et allemandes.",
@@ -150,6 +155,7 @@ export const CHARACTERS = [
     is_premium: false,
     isNew: false,
     duration: '0:57',
+    youtubeId: null,
     img: 'https://picsum.photos/seed/catherine-de-medicis-portrait/400/600',
     heroImg: null,
     bio: "Reine puis régente de France, Catherine de Médicis gouverna dans l'ombre et dans la lumière pendant plus de trente ans, manœuvrant avec habileté entre protestants et catholiques dans une France déchirée par les guerres de religion. Femme de culture héritière de la Renaissance florentine, elle introduisit le ballet à la cour de France et protégea les arts avec une passion éclairée. Sa responsabilité dans le massacre de la Saint-Barthélemy reste l'une des questions les plus débattues de l'historiographie française.",
@@ -164,6 +170,7 @@ export const CHARACTERS = [
     is_premium: false,
     isNew: false,
     duration: '1:03',
+    youtubeId: null,
     img: 'https://picsum.photos/seed/cleopatre-portrait/400/600',
     heroImg: null,
     bio: "Dernière souveraine du royaume ptolémaïque d'Égypte, Cléopâtre VII fut une reine d'une intelligence politique exceptionnelle, maîtrisant neuf langues et les subtilités de la diplomatie méditerranéenne. Ses alliances avec Jules César puis Marc Antoine représentèrent une stratégie lucide pour préserver l'indépendance égyptienne face à la puissance romaine grandissante. Sa mort volontaire à trente-neuf ans, après la défaite d'Actium, clôtura l'ère des pharaons et ouvrit celle de la domination romaine sur l'Orient.",
@@ -178,6 +185,7 @@ export const CHARACTERS = [
     is_premium: false,
     isNew: false,
     duration: '0:59',
+    youtubeId: null,
     img: 'https://picsum.photos/seed/jeanne-darc-portrait/400/600',
     heroImg: null,
     bio: "Jeune paysanne lorraine guidée par des voix célestes, Jeanne d'Arc prit la tête des armées françaises à dix-sept ans et renversa le cours de la guerre de Cent Ans en faisant sacrer Charles VII à Reims. Capturée par les Bourguignons puis vendue aux Anglais, elle fut jugée pour hérésie et brûlée vive à Rouen à l'âge de dix-neuf ans. Réhabilitée en 1456 et canonisée en 1920, elle demeure le symbole intemporel du courage féminin et de l'identité nationale française.",
@@ -192,6 +200,7 @@ export const CHARACTERS = [
     is_premium: false,
     isNew: false,
     duration: '0:54',
+    youtubeId: null,
     img: 'https://picsum.photos/seed/tomoe-gozen-portrait/400/600',
     heroImg: null,
     bio: "Onna-musha légendaire du Japon médiéval, Tomoe Gozen fut l'une des rares femmes samouraïs à combattre aux côtés des plus grands guerriers de son époque. Célèbre pour sa beauté autant que pour sa maîtrise du katana et du tir à l'arc, elle accompagna le seigneur Minamoto no Yoshinaka dans ses batailles contre le clan Taira. Son histoire, transmise dans le Heike Monogatari, en fait l'archétype de la femme guerrière dans la culture japonaise.",
@@ -206,6 +215,7 @@ export const CHARACTERS = [
     is_premium: false,
     isNew: false,
     duration: '0:52',
+    youtubeId: null,
     img: 'https://picsum.photos/seed/anne-bonny-portrait/400/600',
     heroImg: null,
     bio: "Née en Irlande et élevée en Caroline du Sud, Anne Bonny brisa toutes les conventions de son époque en rejoignant la piraterie des Caraïbes aux côtés du célèbre Calico Jack. Redoutée par ses ennemis pour sa férocité au combat, elle fut l'une des rares femmes pirates reconnues de l'âge d'or de la piraterie. Capturée en 1720, elle échappa mystérieusement à la pendaison et sa destinée finale reste enveloppée dans le mystère et la légende.",
@@ -220,6 +230,7 @@ export const CHARACTERS = [
     is_premium: false,
     isNew: false,
     duration: '1:01',
+    youtubeId: null,
     img: 'https://picsum.photos/seed/magellan-portrait/400/600',
     heroImg: null,
     bio: "Navigateur portugais au service de l'Espagne, Ferdinand de Magellan organisa la première circumnavigation de la Terre, prouvant définitivement la rotondité du globe et l'existence d'un passage vers les Indes par l'ouest. Son périple de trois ans à travers des mers inconnues fut une épopée de courage et d'obstination, traversant les tempêtes du détroit qui porte aujourd'hui son nom. Tué aux Philippines lors de la bataille de Mactan en 1521, il ne vit jamais l'achèvement de son œuvre colossale.",
@@ -234,6 +245,7 @@ export const CHARACTERS = [
     is_premium: false,
     isNew: false,
     duration: '1:04',
+    youtubeId: null,
     img: 'https://picsum.photos/seed/gengis-khan-portrait/400/600',
     heroImg: null,
     bio: "Fondateur et premier Grand Khan de l'Empire mongol, Gengis Khan unifia les tribus nomades de la steppe pour créer le plus grand empire continu de l'histoire humaine, s'étendant du Pacifique à la Caspienne. Stratège militaire de génie, il révolutionna l'art de la guerre par la mobilité de sa cavalerie et une organisation tactique d'une redoutable efficacité. Son héritage dépasse la conquête : il favorisa le commerce sur la Route de la Soie et permit un échange culturel sans précédent entre l'Orient et l'Occident.",
@@ -248,6 +260,7 @@ export const CHARACTERS = [
     is_premium: false,
     isNew: false,
     duration: '0:56',
+    youtubeId: null,
     img: 'https://picsum.photos/seed/george-washington-portrait/400/600',
     heroImg: null,
     bio: "Premier président des États-Unis d'Amérique, George Washington commanda les forces révolutionnaires lors de la guerre d'Indépendance et façonna les fondements d'une nouvelle nation fondée sur les principes des Lumières. Son refus de briguer un troisième mandat présidentiel établit un précédent démocratique fondamental qui définit encore la démocratie américaine. Vénéré comme le Père de la Nation, il incarne l'idéal républicain et l'abnégation au service de la chose publique.",
@@ -262,6 +275,7 @@ export const CHARACTERS = [
     is_premium: false,
     isNew: false,
     duration: '0:53',
+    youtubeId: null,
     img: 'https://picsum.photos/seed/socrate-portrait/400/600',
     heroImg: null,
     bio: "Philosophe athénien considéré comme le père de la philosophie occidentale, Socrate n'écrivit jamais une ligne mais révolutionna la pensée humaine par sa méthode dialectique, l'ironie et la maïeutique. Accusé de corrompre la jeunesse et d'impiété envers les dieux de la cité, il fut condamné à mort par le tribunal athénien et choisit de boire la ciguë plutôt que de renier ses convictions. Sa mort volontaire, immortalisée par son disciple Platon, fit de lui le martyr éternel de la liberté de pensée.",
@@ -276,8 +290,23 @@ export const CHARACTERS = [
     is_premium: true,
     isNew: false,
     duration: '0:48',
+    youtubeId: null,
     img: 'https://picsum.photos/seed/meduse-portrait/400/600',
     heroImg: null,
     bio: "Gorgone au regard pétrifiant, Méduse fut jadis une belle mortelle dont Poséidon s'éprit, avant qu'Athéna ne la transforme en monstre terrible aux cheveux de serpents. Seul Persée, guidé par les dieux et armé du bouclier-miroir d'Athéna, parvint à la décapiter sans croiser son regard fatal. De son sang jaillit Pégase, le cheval ailé, et sa tête tranchée devint l'une des armes les plus redoutables de la mythologie grecque, capable encore de pétrifier ses ennemis.",
   },
 ];
+
+export function getStaticTransition(from, to) {
+  if (!from || !to) return '';
+  const yearA = from.birth_year;
+  const yearB = to.birth_year;
+  if (yearA !== null && yearB !== null) {
+    const diff = Math.abs(yearB - yearA);
+    const centuries = Math.round(diff / 100);
+    if (centuries >= 2) {
+      return `Entre ${from.name} et ${to.name} — ${centuries} siècles d'Histoire, deux destins façonnés par leur époque.`;
+    }
+  }
+  return `De ${from.name} à ${to.name} — deux figures inoubliables gravées dans la mémoire de l'humanité.`;
+}
