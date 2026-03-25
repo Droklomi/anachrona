@@ -8,6 +8,7 @@ import MythologiePage from './MythologiePage';
 import UchroniesPage from './UchroniesPage';
 import LoginPage from './LoginPage';
 import Homepage from './Homepage';
+import UniversePage from './UniversePage';
 
 function PrivateRoute({ user, profile, children }) {
   if (user === undefined) return null;
@@ -67,6 +68,7 @@ export default function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/galerie" element={<GaleriePage user={user} profile={profile} />} />
         <Route path="/catalogue" element={<CataloguePage user={user} profile={profile} />} />
+        <Route path="/univers/:universeId" element={<UniversePage user={user} profile={profile} />} />
         <Route path="/mythologie" element={<MythologiePage user={user} profile={profile} />} />
         <Route path="/villes" element={
           <PrivateRoute user={user} profile={profile}>

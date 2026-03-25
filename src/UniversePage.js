@@ -1,25 +1,26 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useNavigate, useParams, Navigate } from 'react-router-dom';
 import AnachronaLogo from './AnachronaLogo';
 import { UNIVERSE_COLORS, UNIVERSES, CHARACTERS } from './data';
 
 /* ─────────────────────────────────────────────
-   EDITORIAL ROWS
+   ERA CLASSIFICATION
 ───────────────────────────────────────────── */
-const EDITORIAL_ROWS = [
-  { id: 'top10', label: 'Top 10 Anachrona', emoji: '🔥', filter: c => c.tags.includes('top10') },
-  { id: 'nouveau', label: 'Nouveau sur Anachrona', emoji: '⭐', filter: c => c.tags.includes('nouveau') },
-  { id: 'destins', label: 'Destins Tragiques', emoji: '💀', filter: c => c.tags.includes('destins-tragiques') },
-  { id: 'conquerants', label: 'Conquérants & Empereurs', emoji: '⚔', filter: c => c.tags.includes('conquerants') },
-  { id: 'femmes', label: 'Femmes de Pouvoir', emoji: '♛', filter: c => c.tags.includes('femmes') },
-  { id: 'defie', label: 'Ils ont défié leur époque', emoji: '✨', filter: c => c.tags.includes('defie-epoque') },
-  {
-    id: 'selection',
-    label: 'Notre sélection du jour',
-    emoji: '🎯',
-    filter: c => ['cleopatre', 'gengis-khan', 'louis-xiv', 'anne-bonny', 'socrate', 'charlemagne'].includes(c.id),
-  },
+const ERA_ORDER = [
+  { id: 'antiquite', label: 'Antiquité' },
+  { id: 'moyen-age', label: 'Moyen Âge' },
+  { id: 'renaissance', label: 'Renaissance & Temps Modernes' },
+  { id: 'xixe-xxe', label: 'XIXe — XXe siècle' },
+  { id: 'inconnue', label: 'Époque inconnue' },
 ];
+
+function getEra(birth_year) {
+  if (birth_year === null || birth_year === undefined) return 'inconnue';
+  if (birth_year < 500) return 'antiquite';
+  if (birth_year < 1400) return 'moyen-age';
+  if (birth_year < 1800) return 'renaissance';
+  return 'xixe-xxe';
+}
 
 /* ─────────────────────────────────────────────
    STYLES
@@ -117,158 +118,6 @@ body::after {
 .hn-btn-premium:hover {
   transform: translateY(-1px);
   box-shadow: 0 0 20px rgba(201,168,76,0.5);
-}
-
-/* HERO */
-.hh {
-  position: relative;
-  height: 100vh;
-  min-height: 600px;
-  overflow: hidden;
-  display: flex;
-  align-items: flex-end;
-}
-.hh-bg {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center top;
-  filter: brightness(0.38) saturate(0.6);
-  animation: hzoom 28s ease-in-out infinite alternate;
-  transform-origin: center center;
-}
-@keyframes hzoom {
-  from { transform: scale(1); }
-  to { transform: scale(1.1); }
-}
-.hh-grad {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(to right, rgba(13,13,10,0.92) 0%, rgba(13,13,10,0.55) 50%, rgba(13,13,10,0.1) 100%),
-    linear-gradient(to top, rgba(13,13,10,0.98) 0%, rgba(13,13,10,0.4) 35%, transparent 70%);
-}
-.hh-content {
-  position: relative;
-  z-index: 2;
-  padding: 0 64px 80px;
-  max-width: 620px;
-}
-.hh-badge {
-  display: inline-block;
-  font-family: 'Cinzel', serif;
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  color: #c9a84c;
-  border: 1px solid rgba(201,168,76,0.5);
-  padding: 5px 14px;
-  margin-bottom: 20px;
-  text-transform: uppercase;
-}
-.hh-title {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: clamp(42px, 7vw, 88px);
-  font-weight: 900;
-  color: #fff;
-  line-height: 1.0;
-  margin-bottom: 16px;
-  text-shadow: 0 2px 30px rgba(0,0,0,0.8);
-}
-.hh-sub {
-  font-family: 'EB Garamond', serif;
-  font-style: italic;
-  font-size: 18px;
-  color: rgba(232,220,200,0.75);
-  margin-bottom: 32px;
-  line-height: 1.5;
-}
-.hh-actions { display: flex; gap: 14px; flex-wrap: wrap; }
-.hh-btn-watch {
-  font-family: 'Cinzel', serif;
-  font-size: 13px;
-  letter-spacing: 0.12em;
-  padding: 13px 32px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  background: linear-gradient(135deg, #c9a84c, #e8c96a);
-  color: #0d0d0a;
-  font-weight: 700;
-  transition: transform 0.2s, box-shadow 0.3s;
-}
-.hh-btn-watch:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,168,76,0.45); }
-.hh-btn-list {
-  font-family: 'Cinzel', serif;
-  font-size: 13px;
-  letter-spacing: 0.12em;
-  padding: 13px 32px;
-  border: 1px solid rgba(232,220,200,0.5);
-  border-radius: 4px;
-  cursor: pointer;
-  background: transparent;
-  color: #e8dcc8;
-  transition: border-color 0.2s, background 0.2s;
-}
-.hh-btn-list:hover { border-color: #c9a84c; background: rgba(201,168,76,0.08); }
-
-/* UNIVERSE BAND */
-.hub {
-  padding: 56px 48px 40px;
-}
-.hub-label {
-  font-family: 'Cinzel', serif;
-  font-size: 11px;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: rgba(201,168,76,0.7);
-  margin-bottom: 28px;
-}
-.hub-track {
-  display: flex;
-  gap: 28px;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  padding-bottom: 8px;
-}
-.hub-track::-webkit-scrollbar { display: none; }
-.hub-track { -ms-overflow-style: none; scrollbar-width: none; }
-.hub-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-.hub-circle {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Cinzel', serif;
-  font-size: 11px;
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: 0.08em;
-  border: 2px solid transparent;
-  transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
-  text-align: center;
-  line-height: 1.3;
-  padding: 8px;
-}
-.hub-item:hover .hub-circle {
-  transform: scale(1.08);
-}
-.hub-name {
-  font-family: 'Cinzel', serif;
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  color: rgba(232,220,200,0.75);
-  text-align: center;
-  max-width: 90px;
-  line-height: 1.3;
 }
 
 /* CHARACTER ROWS */
@@ -428,54 +277,6 @@ body::after {
   letter-spacing: 0.15em;
   color: rgba(232,220,200,0.25);
   text-transform: uppercase;
-}
-
-/* TIKTOK FOOTER */
-.htk {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 28px 64px;
-  background: rgba(255,255,255,0.03);
-  border-top: 1px solid rgba(255,255,255,0.06);
-  flex-wrap: wrap;
-  gap: 20px;
-}
-.htk-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.htk-text h3 {
-  font-family: 'Cinzel', serif;
-  font-size: 15px;
-  letter-spacing: 0.08em;
-  color: #e8dcc8;
-}
-.htk-text p {
-  font-family: 'EB Garamond', serif;
-  font-size: 14px;
-  font-style: italic;
-  color: rgba(232,220,200,0.55);
-  margin-top: 3px;
-}
-.htk-btn {
-  font-family: 'Cinzel', serif;
-  font-size: 12px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding: 11px 28px;
-  border-radius: 4px;
-  border: 1px solid rgba(232,220,200,0.35);
-  color: #e8dcc8;
-  background: transparent;
-  text-decoration: none;
-  transition: background 0.2s, border-color 0.2s;
-  cursor: pointer;
-}
-.htk-btn:hover {
-  background: rgba(255,255,255,0.06);
-  border-color: rgba(232,220,200,0.6);
 }
 
 /* DETAIL PANEL */
@@ -694,20 +495,147 @@ body::after {
 }
 .dp-bottom-pad { height: 32px; }
 
+/* UNIVERSE HERO */
+.uv-hero {
+  position: relative;
+  height: 100vh;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+.uv-hero-bg {
+  position: absolute;
+  inset: 0;
+  background-size: 200px 200px;
+  opacity: 0.6;
+}
+.uv-hero-grad {
+  position: absolute;
+  inset: 0;
+}
+.uv-hero-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 64px;
+  gap: 48px;
+}
+.uv-hero-left {
+  flex: 1;
+  max-width: 580px;
+}
+.uv-hero-icon {
+  font-family: 'Cinzel', serif;
+  font-size: 120px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 24px;
+  opacity: 0.18;
+  letter-spacing: -0.02em;
+  user-select: none;
+}
+.uv-hero-name {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(36px, 5.5vw, 72px);
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.05;
+  margin-bottom: 10px;
+  text-shadow: 0 2px 30px rgba(0,0,0,0.8);
+}
+.uv-hero-sub {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+}
+.uv-hero-text {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 18px;
+  line-height: 1.7;
+  color: rgba(232,220,200,0.8);
+  margin-bottom: 36px;
+  max-width: 520px;
+}
+.uv-hero-btn {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 13px 32px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #0d0d0a;
+  font-weight: 700;
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+.uv-hero-btn:hover {
+  transform: translateY(-2px);
+}
+.uv-hero-right {
+  flex-shrink: 0;
+  width: 240px;
+}
+.uv-hero-portrait {
+  width: 240px;
+  height: 360px;
+  object-fit: cover;
+  border-radius: 4px;
+  filter: brightness(0.75) saturate(0.85);
+  display: block;
+}
+.uv-hero-portrait-wrap {
+  position: relative;
+}
+.uv-hero-portrait-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+/* ERA SECTION LABEL */
+.uv-era-section {
+  padding: 32px 48px 0;
+}
+.uv-era-label {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(201,168,76,0.5);
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(201,168,76,0.1);
+}
+
 /* RESPONSIVE */
+@media (max-width: 900px) {
+  .uv-hero-right { display: none; }
+  .uv-hero-content { padding: 0 32px; }
+  .uv-hero-icon { font-size: 80px; }
+}
 @media (max-width: 768px) {
   .hn { padding: 0 20px; }
   .hn-links { display: none; }
-  .hh-content { padding: 0 24px 60px; }
-  .hub { padding: 40px 20px 28px; }
+  .uv-hero-content { padding: 0 24px; }
+  .uv-hero-icon { font-size: 64px; }
   .hs { padding: 0 20px 36px; }
   .hsep { margin: 20px 20px 36px; }
   .hfooter { padding: 36px 20px; }
-  .htk { padding: 22px 24px; }
   .dp-meta { padding: 20px 20px 0; }
   .dp-section { padding: 0 20px; }
   .dp-divider { margin: 16px 20px; }
   .dp-char-name { font-size: 22px; }
+  .uv-era-section { padding: 24px 20px 0; }
 }
 `;
 
@@ -864,33 +792,14 @@ function DetailPanel({ char, onClose, onSelect, isPremium }) {
 }
 
 /* ─────────────────────────────────────────────
-   TIKTOK ICON SVG
-───────────────────────────────────────────── */
-function TikTokIcon() {
-  return (
-    <svg
-      width="32"
-      height="32"
-      viewBox="0 0 32 32"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <path
-        d="M21.5 2h-3.8v19.1a3.7 3.7 0 0 1-3.7 3.7 3.7 3.7 0 0 1-3.7-3.7 3.7 3.7 0 0 1 3.7-3.7c.36 0 .7.05 1.03.14V13.6a7.55 7.55 0 0 0-1.03-.07 7.5 7.5 0 0 0-7.5 7.5 7.5 7.5 0 0 0 7.5 7.5 7.5 7.5 0 0 0 7.5-7.5V11.4a11.1 11.1 0 0 0 6.5 2.1V9.7A7.3 7.3 0 0 1 21.5 2Z"
-        fill="white"
-      />
-    </svg>
-  );
-}
-
-/* ─────────────────────────────────────────────
    MAIN COMPONENT
 ───────────────────────────────────────────── */
-export default function CataloguePage({ user, profile }) {
+export default function UniversePage({ user, profile }) {
   const navigate = useNavigate();
+  const { universeId } = useParams();
   const [scrolled, setScrolled] = useState(false);
   const [selected, setSelected] = useState(null);
+  const eraRef = useRef(null);
 
   const isPremium = profile?.is_premium === true;
 
@@ -900,7 +809,38 @@ export default function CataloguePage({ user, profile }) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const featured = CHARACTERS.find(c => c.id === 'jules-cesar');
+  const u = UNIVERSES.find(x => x.id === universeId);
+  if (!u) return <Navigate to="/catalogue" replace />;
+
+  // Characters belonging to this universe
+  const universeChars = CHARACTERS.filter(c => c.universe === universeId);
+
+  // Group by era, sorted chronologically within each era
+  const eraGroups = ERA_ORDER.map(era => {
+    const chars = universeChars
+      .filter(c => getEra(c.birth_year) === era.id)
+      .sort((a, b) => {
+        if (a.birth_year === null) return 1;
+        if (b.birth_year === null) return -1;
+        return a.birth_year - b.birth_year;
+      });
+    return { ...era, chars };
+  }).filter(era => era.chars.length > 0);
+
+  const multipleEras = eraGroups.length > 1;
+
+  // First character portrait for hero
+  const firstChar = universeChars.sort((a, b) => {
+    if (a.birth_year === null) return 1;
+    if (b.birth_year === null) return -1;
+    return a.birth_year - b.birth_year;
+  })[0];
+
+  const scrollToContent = () => {
+    if (eraRef.current) {
+      eraRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <div style={{ background: '#0d0d0a', minHeight: '100vh' }}>
@@ -912,10 +852,8 @@ export default function CataloguePage({ user, profile }) {
           <AnachronaLogo />
         </div>
         <ul className="hn-links">
-          <li className="active">Histoire</li>
-          <li>Civilisations</li>
-          <li>Batailles</li>
-          <li>Ma Liste</li>
+          <li onClick={() => navigate('/catalogue')}>← Histoire</li>
+          <li className="active" style={{ color: u.color }}>{u.name}</li>
         </ul>
         <div className="hn-right">
           <button className="hn-btn-myth" onClick={() => navigate('/mythologie')}>
@@ -927,90 +865,85 @@ export default function CataloguePage({ user, profile }) {
         </div>
       </nav>
 
-      {/* HERO */}
-      <section className="hh">
+      {/* UNIVERSE HERO */}
+      <section className="uv-hero">
+        {/* SVG pattern background */}
         <div
-          className="hh-bg"
-          style={{ backgroundImage: `url(${featured.heroImg})` }}
+          className="uv-hero-bg"
+          style={{ backgroundImage: u.pattern }}
         />
-        <div className="hh-grad" />
-        <div className="hh-content">
-          <span className="hh-badge">ROME · À LA UNE</span>
-          <h1 className="hh-title">Jules César</h1>
-          <p className="hh-sub">
-            Général, dictateur, dieu vivant — l'homme qui mit fin à la République romaine.
-          </p>
-          <div className="hh-actions">
-            <button className="hh-btn-watch" onClick={() => setSelected(featured)}>
-              ▶ REGARDER
-            </button>
-            <button className="hh-btn-list">+ MA LISTE</button>
-          </div>
-        </div>
-      </section>
+        {/* Gradient overlay */}
+        <div
+          className="uv-hero-grad"
+          style={{
+            background: `linear-gradient(135deg, ${u.color}22 0%, #0d0d0a 60%)`,
+          }}
+        />
 
-      {/* UNIVERSE BAND */}
-      <section className="hub">
-        <p className="hub-label">Les Univers</p>
-        <div className="hub-track">
-          {UNIVERSES.map(u => (
-            <div className="hub-item" key={u.id} onClick={() => navigate('/univers/' + u.id)}>
-              <div
-                className="hub-circle"
-                style={{
-                  background: `radial-gradient(circle at 35% 35%, ${u.color}cc, ${u.color}55)`,
-                  boxShadow: `inset 0 0 0 2px ${u.color}33`,
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = u.color;
-                  e.currentTarget.style.boxShadow = `0 0 18px ${u.color}55, inset 0 0 0 2px ${u.color}99`;
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = 'transparent';
-                  e.currentTarget.style.boxShadow = `inset 0 0 0 2px ${u.color}33`;
-                }}
-              >
-                {u.icon}
-              </div>
-              <span className="hub-name">{u.name}</span>
+        <div className="uv-hero-content">
+          <div className="uv-hero-left">
+            <div className="uv-hero-icon" style={{ color: u.color }}>
+              {u.icon}
             </div>
-          ))}
+            <h1 className="uv-hero-name">{u.name}</h1>
+            <div className="uv-hero-sub" style={{ color: u.color }}>
+              {u.sub}
+            </div>
+            <p className="uv-hero-text">{u.heroText}</p>
+            <button
+              className="uv-hero-btn"
+              style={{
+                background: `linear-gradient(135deg, ${u.color}, ${u.color}cc)`,
+                boxShadow: `0 0 24px ${u.color}44`,
+              }}
+              onClick={scrollToContent}
+            >
+              Explorer les personnages
+            </button>
+          </div>
+
+          {firstChar && (
+            <div className="uv-hero-right">
+              <div
+                className="uv-hero-portrait-wrap"
+                style={{ boxShadow: `0 0 40px ${u.color}33` }}
+              >
+                <img
+                  className="uv-hero-portrait"
+                  src={firstChar.img}
+                  alt={firstChar.name}
+                  style={{ borderLeft: `3px solid ${u.color}` }}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    borderRadius: '4px',
+                    background: `linear-gradient(to top, ${u.color}33 0%, transparent 50%)`,
+                    pointerEvents: 'none',
+                  }}
+                />
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
-      {/* EDITORIAL ROWS */}
-      {EDITORIAL_ROWS.map(row => {
-        const chars = CHARACTERS.filter(row.filter);
-        return (
-          <CharRow
-            key={row.id}
-            label={row.label}
-            emoji={row.emoji}
-            characters={chars}
-            onSelect={setSelected}
-            accentColor="#c9a84c"
-          />
-        );
-      })}
-
-      {/* SEPARATOR */}
-      <hr className="hsep" />
-
-      {/* UNIVERSE ROWS */}
-      {UNIVERSES.map(u => {
-        const chars = CHARACTERS.filter(c => c.universe === u.id);
-        if (chars.length === 0) return null;
-        return (
-          <CharRow
-            key={u.id}
-            label={u.name}
-            emoji={null}
-            characters={chars}
-            onSelect={setSelected}
-            accentColor={u.color}
-          />
-        );
-      })}
+      {/* ERA ROWS */}
+      <div ref={eraRef} style={{ paddingTop: '48px' }}>
+        {eraGroups.map((era, idx) => (
+          <div key={era.id}>
+            <CharRow
+              label={multipleEras ? era.label : 'Tous les personnages'}
+              emoji={null}
+              characters={era.chars}
+              onSelect={setSelected}
+              accentColor={u.color}
+            />
+            {idx < eraGroups.length - 1 && <hr className="hsep" />}
+          </div>
+        ))}
+      </div>
 
       {/* FOOTER */}
       <footer className="hfooter">
@@ -1020,25 +953,6 @@ export default function CataloguePage({ user, profile }) {
         <p className="hfooter-tagline">L'Histoire vivante, à portée de main.</p>
         <p className="hfooter-copy">© 2026 Anachrona — Tous droits réservés</p>
       </footer>
-
-      {/* TIKTOK FOOTER */}
-      <div className="htk">
-        <div className="htk-left">
-          <TikTokIcon />
-          <div className="htk-text">
-            <h3>@anachrona.fr</h3>
-            <p>Découvrez l'Histoire en 60 secondes</p>
-          </div>
-        </div>
-        <a
-          href="https://www.tiktok.com/@anachrona.fr"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="htk-btn"
-        >
-          Suivre sur TikTok
-        </a>
-      </div>
 
       {/* DETAIL PANEL */}
       {selected && (
