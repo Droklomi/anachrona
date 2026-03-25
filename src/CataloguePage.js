@@ -25,6 +25,8 @@ const styles = `
   .cn-links { display:flex; gap:clamp(16px,3vw,36px); list-style:none; }
   .cn-links a { font-family:'Cinzel',serif; font-size:.65rem; letter-spacing:.22em; text-transform:uppercase; color:rgba(245,240,232,.6); cursor:pointer; text-decoration:none; transition:color .3s; }
   .cn-links a:hover,.cn-links a.active { color:#C9A84C; }
+  .cn-myth-btn { font-family:'Cinzel',serif; font-size:.58rem; letter-spacing:.22em; text-transform:uppercase; color:#fff; background:linear-gradient(135deg,#7C3AED,#A78BFA); padding:9px 20px; border:none; cursor:pointer; transition:all .3s; box-shadow:0 0 16px rgba(139,92,246,.35); }
+  .cn-myth-btn:hover { box-shadow:0 0 28px rgba(139,92,246,.65); transform:translateY(-1px); }
   .cn-cta { font-family:'Cinzel',serif; font-size:.58rem; letter-spacing:.22em; text-transform:uppercase; color:#09090F; background:linear-gradient(135deg,#E8C96A,#C9A84C); padding:9px 22px; border:none; cursor:pointer; transition:all .3s; }
   .cn-cta:hover { box-shadow:0 0 22px rgba(201,168,76,.5); transform:translateY(-1px); }
 
@@ -159,8 +161,7 @@ const styles = `
   .cfoot-logo { cursor:pointer; opacity:.6; transition:opacity .3s; }
   .cfoot-logo:hover { opacity:1; }
 
-  .cn-mobile-myth { display:none; }
-  @media(max-width:768px) { .cn-links{display:none} .ch-title{font-size:clamp(2rem,9vw,3.2rem)} .cc{width:132px} .cn-mobile-myth{display:flex;align-items:center;} }
+  @media(max-width:768px) { .cn-links{display:none} .ch-title{font-size:clamp(2rem,9vw,3.2rem)} .cc{width:132px} }
 `;
 
 // ── DA CONFIG ─────────────────────────────────────────────────────────────────
@@ -471,10 +472,9 @@ export default function CataloguePage({ user }) {
         </span>
         <ul className="cn-links">
           <li><a className="active">Histoire</a></li>
-          <li><a onClick={() => navigate('/mythologie')} style={{ cursor: 'pointer' }}>Mythologie</a></li>
         </ul>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <a className="cn-mobile-myth" onClick={() => navigate('/mythologie')} style={{ cursor: 'pointer', fontFamily: "'Cinzel',serif", fontSize: '.58rem', letterSpacing: '.22em', textTransform: 'uppercase', color: 'rgba(245,240,232,.6)' }}>Mythologie</a>
+          <button className="cn-myth-btn" onClick={() => navigate('/mythologie')}>✦ Mythologie</button>
           <button className="cn-cta" onClick={() => navigate('/login')}>
             {user ? 'Mon Compte' : 'Devenir Premium'}
           </button>
