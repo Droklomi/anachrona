@@ -902,7 +902,6 @@ export default function CataloguePage({ user, profile }) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const featured = CHARACTERS.find(c => c.id === 'jules-cesar');
 
   return (
     <div style={{ background: '#0d0d0a', minHeight: '100vh' }}>
@@ -925,28 +924,6 @@ export default function CataloguePage({ user, profile }) {
           </button>
         </div>
       </nav>
-
-      {/* HERO */}
-      <section className="hh">
-        <div
-          className="hh-bg"
-          style={{ backgroundImage: `url(${featured.heroImg})` }}
-        />
-        <div className="hh-grad" />
-        <div className="hh-content">
-          <span className="hh-badge">ROME · À LA UNE</span>
-          <h1 className="hh-title">Jules César</h1>
-          <p className="hh-sub">
-            Général, dictateur, dieu vivant — l'homme qui mit fin à la République romaine.
-          </p>
-          <div className="hh-actions">
-            <button className="hh-btn-watch" onClick={() => setSelected(featured)}>
-              ▶ REGARDER
-            </button>
-            <button className="hh-btn-list">+ MA LISTE</button>
-          </div>
-        </div>
-      </section>
 
       {/* UNIVERSE BAND */}
       <section className="hub">
