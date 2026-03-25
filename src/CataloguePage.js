@@ -992,25 +992,6 @@ export default function CataloguePage({ user, profile }) {
         );
       })}
 
-      {/* SEPARATOR */}
-      <hr className="hsep" />
-
-      {/* UNIVERSE ROWS */}
-      {UNIVERSES.map(u => {
-        const chars = CHARACTERS.filter(c => c.universe === u.id);
-        if (chars.length === 0) return null;
-        return (
-          <CharRow
-            key={u.id}
-            label={u.name}
-            emoji={null}
-            characters={chars}
-            onSelect={setSelected}
-            accentColor={u.color}
-          />
-        );
-      })}
-
       {/* FOOTER */}
       <footer className="hfooter">
         <div onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
