@@ -1,20 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
-import VillesPage from './VillesPage';
-import GaleriePage from './GaleriePage';
 import CataloguePage from './CataloguePage';
 import MythologiePage from './MythologiePage';
-import UchroniesPage from './UchroniesPage';
 import LoginPage from './LoginPage';
 import UniversePage from './UniversePage';
 import ShufflePage from './ShufflePage';
-
-function PrivateRoute({ user, profile, children }) {
-  if (user === undefined) return null;
-  if (!user) return <Navigate to="/login" replace />;
-  return children;
-}
 
 export default function App() {
   const [user, setUser] = useState(undefined);
@@ -62,20 +53,9 @@ export default function App() {
         <Route path="/" element={<CataloguePage user={user} profile={profile} />} />
         <Route path="/catalogue" element={<Navigate to="/" replace />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/galerie" element={<GaleriePage user={user} profile={profile} />} />
         <Route path="/univers/:universeId" element={<UniversePage user={user} profile={profile} />} />
         <Route path="/shuffle" element={<ShufflePage user={user} profile={profile} />} />
         <Route path="/mythologie" element={<MythologiePage user={user} profile={profile} />} />
-        <Route path="/villes" element={
-          <PrivateRoute user={user} profile={profile}>
-            <VillesPage user={user} profile={profile} />
-          </PrivateRoute>
-        } />
-        <Route path="/uchronies" element={
-          <PrivateRoute user={user} profile={profile}>
-            <UchroniesPage user={user} profile={profile} />
-          </PrivateRoute>
-        } />
       </Routes>
     </BrowserRouter>
   );
