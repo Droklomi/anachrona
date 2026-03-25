@@ -7,7 +7,6 @@ import CataloguePage from './CataloguePage';
 import MythologiePage from './MythologiePage';
 import UchroniesPage from './UchroniesPage';
 import LoginPage from './LoginPage';
-import Homepage from './Homepage';
 import UniversePage from './UniversePage';
 import ShufflePage from './ShufflePage';
 
@@ -22,28 +21,23 @@ export default function App() {
   const [profile, setProfile] = useState(null);
 
   const fetchProfile = async (userId) => {
-  console.log('fetchProfile appelé pour:', userId);
-  
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', userId)
-    .single();
-
-  console.log('data:', data, 'error:', error);
-
-  if (data) {
-    setProfile(data);
-  } else {
-    const { data: newProfile, error: insertError } = await supabase
+    const { data } = await supabase
       .from('profiles')
-      .insert([{ id: userId, is_premium: false }])
-      .select()
+      .select('*')
+      .eq('id', userId)
       .single();
-    console.log('newProfile:', newProfile, 'insertError:', insertError);
-    setProfile(newProfile);
-  }
-}
+
+    if (data) {
+      setProfile(data);
+    } else {
+      const { data: newProfile } = await supabase
+        .from('profiles')
+        .insert([{ id: userId, is_premium: false }])
+        .select()
+        .single();
+      setProfile(newProfile);
+    }
+  };
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -65,10 +59,10 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Homepage user={user} profile={profile} />} />
+        <Route path="/" element={<CataloguePage user={user} profile={profile} />} />
+        <Route path="/catalogue" element={<Navigate to="/" replace />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/galerie" element={<GaleriePage user={user} profile={profile} />} />
-        <Route path="/catalogue" element={<CataloguePage user={user} profile={profile} />} />
         <Route path="/univers/:universeId" element={<UniversePage user={user} profile={profile} />} />
         <Route path="/shuffle" element={<ShufflePage user={user} profile={profile} />} />
         <Route path="/mythologie" element={<MythologiePage user={user} profile={profile} />} />
