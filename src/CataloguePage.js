@@ -117,55 +117,114 @@ body::after {
   box-shadow: 0 0 20px rgba(201,168,76,0.5);
 }
 
-/* UNIVERSE BAND */
+/* HERO UNIVERS */
 .hub {
-  padding: 56px 48px 40px;
-}
-.hub-label {
-  font-family: 'Cinzel', serif;
-  font-size: 11px;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: rgba(201,168,76,0.7);
-  margin-bottom: 28px;
-}
-.hub-track {
-  display: flex;
-  gap: 28px;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  padding-bottom: 8px;
-}
-.hub-track::-webkit-scrollbar { display: none; }
-.hub-track { -ms-overflow-style: none; scrollbar-width: none; }
-.hub-item {
+  min-height: 100vh;
+  padding: 100px 48px 60px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-.hub-circle {
-  width: 160px;
-  height: 56px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
   justify-content: center;
+  gap: 48px;
+}
+.hub-header {
+  text-align: center;
+}
+.hub-tagline {
   font-family: 'Cinzel', serif;
   font-size: 11px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(201,168,76,0.6);
+  margin-bottom: 20px;
+}
+.hub-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(28px, 5vw, 56px);
+  font-weight: 900;
+  background: linear-gradient(135deg, #F5DFA0, #C9A84C, #8B6914);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.1;
+  letter-spacing: 0.05em;
+}
+.hub-sub {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 17px;
+  color: rgba(232,220,200,0.5);
+  margin-top: 12px;
+  letter-spacing: 0.04em;
+}
+.hub-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  width: 100%;
+  max-width: 1100px;
+}
+.hub-card {
+  position: relative;
+  height: 190px;
+  border-radius: 8px;
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 24px;
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.hub-card:hover {
+  transform: translateY(-5px);
+}
+.hub-card-bg {
+  position: absolute;
+  inset: 0;
+  background-size: 160px 160px;
+  opacity: 0.5;
+}
+.hub-card-grad {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, transparent 0%, rgba(10,10,8,0.85) 70%);
+}
+.hub-card-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  transition: opacity 0.3s;
+  opacity: 0.6;
+}
+.hub-card:hover .hub-card-bar { opacity: 1; }
+.hub-card-content {
+  position: relative;
+  z-index: 1;
+}
+.hub-card-name {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(13px, 1.5vw, 17px);
   font-weight: 700;
   color: #fff;
-  letter-spacing: 0.1em;
-  border: 1px solid transparent;
-  transition: border-color 0.3s, transform 0.2s, box-shadow 0.3s;
-  text-align: center;
-  text-transform: uppercase;
-  padding: 0 12px;
+  line-height: 1.25;
+  margin-bottom: 6px;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.6);
 }
-.hub-item:hover .hub-circle {
-  transform: translateY(-2px);
+.hub-card-sub {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 13px;
+  color: rgba(232,220,200,0.55);
+  line-height: 1.4;
+}
+@media (max-width: 768px) {
+  .hub { padding: 100px 16px 48px; gap: 32px; }
+  .hub-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .hub-card { height: 140px; padding: 16px; }
 }
 
 /* CHARACTER ROWS */
@@ -823,28 +882,29 @@ export default function CataloguePage({ user, profile }) {
         </div>
       </nav>
 
-      {/* UNIVERSE BAND */}
+      {/* HERO UNIVERS */}
       <section className="hub">
-        <p className="hub-label">Les Univers</p>
-        <div className="hub-track">
+        <div className="hub-header">
+          <p className="hub-tagline">✦ Choisissez votre univers ✦</p>
+          <h1 className="hub-title">Anachrona</h1>
+          <p className="hub-sub">L'Histoire vivante, à portée de main.</p>
+        </div>
+        <div className="hub-grid">
           {UNIVERSES.map(u => (
-            <div className="hub-item" key={u.id} onClick={() => navigate('/univers/' + u.id)}>
-              <div
-                className="hub-circle"
-                style={{
-                  background: `radial-gradient(circle at 35% 35%, ${u.color}cc, ${u.color}55)`,
-                  boxShadow: `inset 0 0 0 2px ${u.color}33`,
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = u.color;
-                  e.currentTarget.style.boxShadow = `0 0 18px ${u.color}55, inset 0 0 0 2px ${u.color}99`;
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = 'transparent';
-                  e.currentTarget.style.boxShadow = `inset 0 0 0 2px ${u.color}33`;
-                }}
-              >
-                {u.name}
+            <div
+              key={u.id}
+              className="hub-card"
+              onClick={() => navigate('/univers/' + u.id)}
+              style={{ boxShadow: `inset 0 0 0 1px ${u.color}22` }}
+              onMouseEnter={e => { e.currentTarget.style.boxShadow = `0 12px 40px ${u.color}33, inset 0 0 0 1px ${u.color}66`; e.currentTarget.style.borderColor = `${u.color}44`; }}
+              onMouseLeave={e => { e.currentTarget.style.boxShadow = `inset 0 0 0 1px ${u.color}22`; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'; }}
+            >
+              <div className="hub-card-bg" style={{ backgroundImage: u.pattern, backgroundColor: `${u.color}18` }} />
+              <div className="hub-card-grad" />
+              <div className="hub-card-bar" style={{ background: u.color }} />
+              <div className="hub-card-content">
+                <div className="hub-card-name">{u.name}</div>
+                <div className="hub-card-sub">{u.sub}</div>
               </div>
             </div>
           ))}
