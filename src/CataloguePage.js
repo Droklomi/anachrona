@@ -913,8 +913,18 @@ export default function CataloguePage({ user, profile }) {
             onMouseLeave={e => { e.currentTarget.style.boxShadow = 'inset 0 0 0 1px rgba(124,58,237,0.2)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'; }}
             style={{ boxShadow: 'inset 0 0 0 1px rgba(124,58,237,0.2)' }}
           >
-            <div className="hub-card-bg" style={{ backgroundColor: 'rgba(124,58,237,0.12)', backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Ccircle cx='40' cy='40' r='25' fill='none' stroke='rgba(167%2C139%2C250%2C.07)' stroke-width='1'/%3E%3Cpath d='M40 15 L43 30 L58 30 L46 39 L50 54 L40 45 L30 54 L34 39 L22 30 L37 30 Z' fill='none' stroke='rgba(167%2C139%2C250%2C.06)' stroke-width='1'/%3E%3C/svg%3E")`, backgroundSize: '160px 160px', opacity: 0.5 }} />
-            <div className="hub-card-grad" style={{ background: 'linear-gradient(160deg, transparent 0%, rgba(5,4,18,0.9) 70%)' }} />
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: `
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200'%3E%3Ccircle cx='15' cy='25' r='1' fill='rgba(255%2C255%2C255%2C0.7)'/%3E%3Ccircle cx='42' cy='8' r='0.6' fill='rgba(255%2C255%2C255%2C0.5)'/%3E%3Ccircle cx='78' cy='40' r='1.1' fill='rgba(255%2C255%2C255%2C0.8)'/%3E%3Ccircle cx='120' cy='15' r='0.8' fill='rgba(255%2C255%2C255%2C0.6)'/%3E%3Ccircle cx='155' cy='55' r='1.3' fill='rgba(255%2C255%2C255%2C0.9)'/%3E%3Ccircle cx='195' cy='20' r='0.7' fill='rgba(255%2C255%2C255%2C0.5)'/%3E%3Ccircle cx='230' cy='45' r='1' fill='rgba(255%2C255%2C255%2C0.7)'/%3E%3Ccircle cx='265' cy='10' r='0.6' fill='rgba(255%2C255%2C255%2C0.4)'/%3E%3Ccircle cx='290' cy='60' r='1.2' fill='rgba(255%2C255%2C255%2C0.6)'/%3E%3Ccircle cx='30' cy='80' r='0.8' fill='rgba(255%2C255%2C255%2C0.5)'/%3E%3Ccircle cx='68' cy='100' r='1.1' fill='rgba(255%2C255%2C255%2C0.7)'/%3E%3Ccircle cx='105' cy='85' r='0.6' fill='rgba(200%2C180%2C255%2C0.8)'/%3E%3Ccircle cx='145' cy='110' r='1.4' fill='rgba(255%2C255%2C255%2C0.9)'/%3E%3Ccircle cx='180' cy='90' r='0.7' fill='rgba(200%2C180%2C255%2C0.6)'/%3E%3Ccircle cx='220' cy='120' r='1' fill='rgba(255%2C255%2C255%2C0.7)'/%3E%3Ccircle cx='258' cy='95' r='0.8' fill='rgba(255%2C255%2C255%2C0.5)'/%3E%3Ccircle cx='50' cy='150' r='1.2' fill='rgba(255%2C255%2C255%2C0.6)'/%3E%3Ccircle cx='88' cy='165' r='0.6' fill='rgba(200%2C180%2C255%2C0.5)'/%3E%3Ccircle cx='130' cy='145' r='1' fill='rgba(255%2C255%2C255%2C0.8)'/%3E%3Ccircle cx='170' cy='170' r='0.7' fill='rgba(255%2C255%2C255%2C0.5)'/%3E%3Ccircle cx='210' cy='155' r='1.3' fill='rgba(200%2C180%2C255%2C0.7)'/%3E%3Ccircle cx='248' cy='175' r='0.8' fill='rgba(255%2C255%2C255%2C0.6)'/%3E%3Ccircle cx='285' cy='140' r='1' fill='rgba(255%2C255%2C255%2C0.7)'/%3E%3Ccircle cx='8' cy='190' r='0.6' fill='rgba(255%2C255%2C255%2C0.4)'/%3E%3Ccircle cx='295' cy='185' r='0.9' fill='rgba(200%2C180%2C255%2C0.6)'/%3E%3C/svg%3E") repeat,
+                radial-gradient(ellipse at 75% 25%, rgba(139,92,246,0.35) 0%, transparent 50%),
+                radial-gradient(ellipse at 15% 75%, rgba(67,56,202,0.3) 0%, transparent 45%),
+                radial-gradient(ellipse at 45% 55%, rgba(109,40,217,0.15) 0%, transparent 55%),
+                #04020e
+              `,
+              backgroundSize: '300px 200px, 100% 100%, 100% 100%, 100% 100%, 100% 100%',
+            }} />
+            <div className="hub-card-grad" style={{ background: 'linear-gradient(90deg, rgba(4,2,14,0.7) 0%, transparent 40%, rgba(4,2,14,0.5) 100%)' }} />
             <div className="hub-card-bar" style={{ background: 'linear-gradient(to bottom, #A78BFA, #7C3AED)' }} />
             <div className="hub-card-content">
               <div className="hub-card-name" style={{ color: '#c4b5fd' }}>✦ Mythologie</div>
