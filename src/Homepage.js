@@ -633,11 +633,11 @@ setTimeout(() => {
 
 </span>
         <ul className="ana-nav-links">
+          <li><a onClick={() => navigate('/catalogue')} style={{cursor:'pointer'}}>Histoire</a></li>
           <li><a href="#portraits">Les Portraits</a></li>
           <li><a onClick={() => navigate('/villes')} style={{cursor:'pointer'}}>Les Villes <span className="ana-premium-badge">Premium</span></a></li>
           <li><a onClick={() => navigate('/uchronies')} style={{cursor:'pointer'}}>La Fiction <span className="ana-premium-badge">Premium</span></a></li>
           <li><a href="#">L'Arène</a></li>
-          <li><a href="#">Musées</a></li>
         </ul>
 <button onClick={()=>navigate('/login')} className="ana-nav-cta">Devenir Premium</button>        <button className={`ana-hamburger ${menuOpen ? 'open' : ''}`} onClick={() => setMenuOpen(!menuOpen)}>
           <span /><span /><span />

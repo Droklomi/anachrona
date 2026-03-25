@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
-import Homepage from './Homepage';
 import VillesPage from './VillesPage';
 import GaleriePage from './GaleriePage';
+import CataloguePage from './CataloguePage';
+import MythologiePage from './MythologiePage';
 import UchroniesPage from './UchroniesPage';
 import LoginPage from './LoginPage';
 
@@ -61,9 +62,11 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Homepage user={user} profile={profile} />} />
+        <Route path="/" element={<CataloguePage user={user} profile={profile} />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/galerie" element={<GaleriePage user={user} profile={profile} />} />
+        <Route path="/catalogue" element={<CataloguePage user={user} profile={profile} />} />
+        <Route path="/mythologie" element={<MythologiePage user={user} profile={profile} />} />
         <Route path="/villes" element={
           <PrivateRoute user={user} profile={profile}>
             <VillesPage user={user} profile={profile} />
