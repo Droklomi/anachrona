@@ -1,530 +1,1292 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AnachronaLogo from './AnachronaLogo';
 
-const styles = `
-  @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
-
-  :root {
-    --noir: #09090F;
-    --or: #C9A84C;
-    --or-clair: #E8C96A;
-    --ivoire: #F5F0E8;
-    --ivoire-sombre: #D4C9B0;
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:#09090F; color:#F5F0E8; font-family:'EB Garamond',serif; overflow-x:hidden; }
-  body::after {
-    content:''; position:fixed; inset:0; pointer-events:none; z-index:9999; opacity:0.5;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
-  }
-
-  /* ── NAV ── */
-  .cn { position:fixed; top:0; width:100%; z-index:500; padding:15px 5%; display:flex; align-items:center; justify-content:space-between; transition:background .4s,border .4s; }
-  .cn.scrolled { background:rgba(9,9,15,.97); border-bottom:1px solid rgba(201,168,76,.12); backdrop-filter:blur(16px); }
-  .cn-links { display:flex; gap:clamp(16px,3vw,36px); list-style:none; }
-  .cn-links a { font-family:'Cinzel',serif; font-size:.65rem; letter-spacing:.22em; text-transform:uppercase; color:rgba(245,240,232,.6); cursor:pointer; text-decoration:none; transition:color .3s; }
-  .cn-links a:hover,.cn-links a.active { color:#C9A84C; }
-  .cn-myth-btn { font-family:'Cinzel',serif; font-size:.58rem; letter-spacing:.22em; text-transform:uppercase; color:#fff; background:linear-gradient(135deg,#7C3AED,#A78BFA); padding:9px 20px; border:none; cursor:pointer; transition:all .3s; box-shadow:0 0 16px rgba(139,92,246,.35); }
-  .cn-myth-btn:hover { box-shadow:0 0 28px rgba(139,92,246,.65); transform:translateY(-1px); }
-  .cn-cta { font-family:'Cinzel',serif; font-size:.58rem; letter-spacing:.22em; text-transform:uppercase; color:#09090F; background:linear-gradient(135deg,#E8C96A,#C9A84C); padding:9px 22px; border:none; cursor:pointer; transition:all .3s; }
-  .cn-cta:hover { box-shadow:0 0 22px rgba(201,168,76,.5); transform:translateY(-1px); }
-
-  /* ── HERO ── */
-  .ch { position:relative; height:82vh; min-height:520px; overflow:hidden; background:#09090F; }
-  .ch-logo-bg { position:absolute; right:-4%; top:50%; transform:translateY(-50%); height:115%; pointer-events:none; display:flex; align-items:center; }
-  .ch-logo-bg img { height:100%; width:auto; opacity:.18; filter:saturate(1.3) brightness(1.1); animation:hzoom 30s ease-out forwards; }
-  @keyframes hzoom { from{transform:scale(1)} to{transform:scale(1.06)} }
-  .ch-logo-glow { position:absolute; right:28%; top:50%; transform:translate(50%,-50%); width:700px; height:700px; background:radial-gradient(circle,rgba(201,168,76,.1) 0%,transparent 65%); pointer-events:none; }
-  .ch-grad { position:absolute; inset:0; background:linear-gradient(to right,rgba(9,9,15,1) 0%,rgba(9,9,15,.85) 35%,rgba(9,9,15,.2) 65%,rgba(9,9,15,.05) 100%),linear-gradient(to top,rgba(9,9,15,1) 0%,rgba(9,9,15,.35) 28%,transparent 55%); }
-  .ch-content { position:absolute; bottom:0; left:0; padding:0 clamp(24px,6%,96px) clamp(48px,8vh,80px); max-width:640px; }
-  .ch-badge { display:inline-flex; align-items:center; gap:8px; font-family:'Cinzel',serif; font-size:.5rem; letter-spacing:.4em; text-transform:uppercase; color:#C9A84C; border:1px solid rgba(201,168,76,.35); padding:4px 12px; margin-bottom:16px; }
-  .ch-badge::before { content:''; width:4px; height:4px; background:#C9A84C; border-radius:50%; }
-  .ch-title { font-family:'Cinzel Decorative',serif; font-size:clamp(2.6rem,7vw,5.5rem); color:#F5F0E8; letter-spacing:.03em; line-height:1.05; margin-bottom:8px; text-shadow:0 4px 60px rgba(0,0,0,.9); }
-  .ch-series { font-family:'Cinzel',serif; font-size:clamp(.55rem,1.3vw,.72rem); letter-spacing:.25em; color:rgba(201,168,76,.7); text-transform:uppercase; margin-bottom:18px; }
-  .ch-desc { font-style:italic; font-size:clamp(.95rem,1.7vw,1.08rem); color:rgba(212,201,176,.8); line-height:1.8; margin-bottom:32px; max-width:460px; }
-  .ch-btns { display:flex; gap:12px; flex-wrap:wrap; }
-  .ch-btn-play { font-family:'Cinzel',serif; font-size:.6rem; letter-spacing:.25em; text-transform:uppercase; color:#09090F; background:linear-gradient(135deg,#E8C96A,#C9A84C); padding:14px 36px; border:none; cursor:pointer; display:flex; align-items:center; gap:12px; transition:all .3s; box-shadow:0 4px 24px rgba(201,168,76,.3); }
-  .ch-btn-play:hover { box-shadow:0 6px 36px rgba(201,168,76,.55); transform:translateY(-2px); }
-  .ch-btn-play-tri { width:0; height:0; border-top:6px solid transparent; border-bottom:6px solid transparent; border-left:10px solid #09090F; margin-left:1px; }
-  .ch-btn-out { font-family:'Cinzel',serif; font-size:.6rem; letter-spacing:.25em; text-transform:uppercase; color:rgba(245,240,232,.85); background:rgba(245,240,232,.07); padding:13px 28px; border:1px solid rgba(245,240,232,.2); cursor:pointer; backdrop-filter:blur(8px); transition:all .3s; }
-  .ch-btn-out:hover { background:rgba(245,240,232,.14); }
-
-  /* ticker */
-  .ch-ticker { position:absolute; bottom:0; left:0; right:0; height:34px; display:flex; align-items:center; background:rgba(9,9,15,.85); border-top:1px solid rgba(201,168,76,.1); overflow:hidden; }
-  .ch-ticker-label { font-family:'Cinzel',serif; font-size:.42rem; letter-spacing:.3em; color:#C9A84C; text-transform:uppercase; padding:0 18px; border-right:1px solid rgba(201,168,76,.2); white-space:nowrap; flex-shrink:0; }
-  .ch-ticker-wrap { flex:1; overflow:hidden; }
-  .ch-ticker-inner { display:flex; width:max-content; animation:ticker 45s linear infinite; }
-  @keyframes ticker { to { transform:translateX(-50%); } }
-  .ch-ticker-item { font-family:'Cinzel',serif; font-size:.42rem; letter-spacing:.22em; color:rgba(245,240,232,.38); text-transform:uppercase; white-space:nowrap; padding:0 24px; }
-  .ch-ticker-item::after { content:'◆'; margin-left:24px; color:rgba(201,168,76,.25); font-size:.32rem; }
-
-  /* ── SECTION BLOCK ── */
-  .cs { position:relative; overflow:hidden; }
-  .cs-bg-pattern { position:absolute; inset:0; pointer-events:none; z-index:0; }
-  .cs-bg-img { position:absolute; inset:0; background-size:cover; background-position:center; filter:brightness(.18) saturate(.5); z-index:0; transition:filter 6s ease-out; }
-  .cs-bg-glow { position:absolute; inset:0; pointer-events:none; z-index:1; }
-  .cs-fade-t { position:absolute; top:0; left:0; right:0; height:80px; background:linear-gradient(to bottom,#09090F,transparent); pointer-events:none; z-index:2; }
-  .cs-fade-b { position:absolute; bottom:0; left:0; right:0; height:80px; background:linear-gradient(to top,#09090F,transparent); pointer-events:none; z-index:2; }
-  .cs-inner { position:relative; z-index:3; padding:60px 0 52px; }
-
-  /* section header */
-  .cs-header { padding:0 clamp(24px,5%,80px) 28px; position:relative; overflow:hidden; }
-  .cs-watermark { position:absolute; right:clamp(24px,5%,80px); top:50%; transform:translateY(-50%); font-family:'Cinzel Decorative',serif; font-size:clamp(5rem,12vw,9rem); color:rgba(255,255,255,.028); letter-spacing:.05em; line-height:1; pointer-events:none; user-select:none; white-space:nowrap; }
-  .cs-header-label { font-family:'Cinzel',serif; font-size:.48rem; letter-spacing:.55em; text-transform:uppercase; margin-bottom:8px; opacity:.75; }
-  .cs-header-title { font-family:'Cinzel Decorative',serif; font-size:clamp(1.3rem,3vw,2rem); letter-spacing:.05em; margin-bottom:5px; line-height:1.15; }
-  .cs-header-sub { font-style:italic; font-size:clamp(.82rem,1.4vw,.93rem); color:rgba(212,201,176,.5); }
-  .cs-header-line { margin-top:16px; height:1px; width:60px; }
-
-  /* ── ROW ── */
-  .cr { margin-bottom:8px; }
-  .cr-head { display:flex; align-items:center; justify-content:space-between; padding:0 clamp(24px,5%,80px); margin-bottom:14px; }
-  .cr-left { display:flex; align-items:center; gap:12px; }
-  .cr-accent { width:3px; height:26px; border-radius:2px; flex-shrink:0; }
-  .cr-title { font-family:'Cinzel',serif; font-size:clamp(.75rem,1.8vw,.95rem); letter-spacing:.15em; color:#F5F0E8; text-transform:uppercase; }
-  .cr-sub { font-family:'EB Garamond',serif; font-style:italic; font-size:clamp(.7rem,1.3vw,.82rem); color:rgba(212,201,176,.4); margin-left:10px; }
-  .cr-voir { font-family:'Cinzel',serif; font-size:.48rem; letter-spacing:.2em; text-transform:uppercase; color:#C9A84C; background:none; border:1px solid rgba(201,168,76,.22); padding:5px 14px; cursor:pointer; opacity:0; transition:opacity .3s; }
-  .cr:hover .cr-voir { opacity:1; }
-  .cr-scroll-wrap { position:relative; }
-  .cr-scroll { display:flex; gap:11px; overflow-x:auto; padding:6px clamp(24px,5%,80px) 20px; scrollbar-width:none; -ms-overflow-style:none; }
-  .cr-scroll::-webkit-scrollbar { display:none; }
-  .cr-fade { position:absolute; top:0; bottom:0; width:90px; pointer-events:none; z-index:5; opacity:0; transition:opacity .3s; }
-  .cr-fade.l { left:0; }
-  .cr-fade.r { right:0; }
-  .cr-scroll-wrap:hover .cr-fade { opacity:1; }
-  .cr-arrow { position:absolute; top:50%; transform:translateY(-50%); width:36px; height:72px; border:none; cursor:pointer; font-size:1.6rem; font-weight:300; display:flex; align-items:center; justify-content:center; z-index:10; opacity:0; pointer-events:none; transition:opacity .3s; background:transparent; }
-  .cr-arrow.l { left:6px; color:rgba(245,240,232,.7); }
-  .cr-arrow.r { right:6px; color:rgba(245,240,232,.7); }
-  .cr-scroll-wrap:hover .cr-arrow { opacity:1; pointer-events:all; }
-  .cr-arrow:hover { color:#fff; }
-
-  /* ── CARD ── */
-  .cc { position:relative; flex-shrink:0; width:162px; cursor:pointer; transition:transform .4s cubic-bezier(.16,1,.3,1); z-index:1; }
-  .cc:hover { transform:scale(1.1) translateY(-8px); z-index:20; }
-  .cc-inner { border-radius:4px; overflow:hidden; aspect-ratio:9/16; position:relative; box-shadow:0 6px 28px rgba(0,0,0,.7); transition:box-shadow .4s; }
-  .cc:hover .cc-inner { box-shadow:0 12px 48px rgba(0,0,0,.9),0 0 0 1.5px var(--accent,.5); }
-  .cc-top-bar { position:absolute; top:0; left:0; right:0; height:3px; z-index:3; }
-  .cc-img { width:100%; height:100%; object-fit:cover; display:block; transition:filter .4s,transform .4s; filter:brightness(.82) saturate(.75); }
-  .cc:hover .cc-img { filter:brightness(.6) saturate(.85); transform:scale(1.05); }
-  .cc-grad { position:absolute; inset:0; background:linear-gradient(to top,rgba(9,9,15,1) 0%,rgba(9,9,15,.5) 35%,rgba(9,9,15,.1) 60%,transparent 80%); }
-  .cc-tint { position:absolute; inset:0; opacity:.1; mix-blend-mode:color; }
-  .cc-dur { position:absolute; top:10px; right:10px; font-family:'Cinzel',serif; font-size:.44rem; letter-spacing:.1em; color:rgba(245,240,232,.75); background:rgba(9,9,15,.75); border:1px solid rgba(245,240,232,.1); padding:2px 7px; border-radius:2px; z-index:3; }
-  .cc-new { position:absolute; top:0; left:10px; font-family:'Cinzel',serif; font-size:.38rem; letter-spacing:.18em; color:#09090F; background:#C9A84C; padding:4px 8px 3px; text-transform:uppercase; font-weight:700; z-index:4; }
-  .cc-info { position:absolute; bottom:0; left:0; right:0; padding:12px 10px 10px; z-index:3; }
-  .cc-name { font-family:'Cinzel',serif; font-size:.56rem; letter-spacing:.12em; color:#F5F0E8; margin-bottom:3px; text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; transition:color .3s; }
-  .cc:hover .cc-name { color:#E8C96A; }
-  .cc-desc { font-style:italic; font-size:.62rem; color:rgba(245,240,232,.5); line-height:1.35; overflow:hidden; max-height:0; opacity:0; transition:max-height .3s ease,opacity .3s ease; }
-  .cc:hover .cc-desc { max-height:36px; opacity:1; }
-  .cc-play { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) scale(.5); width:44px; height:44px; border-radius:50%; background:rgba(232,201,106,.9); display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .3s,transform .35s cubic-bezier(.16,1,.3,1); z-index:4; box-shadow:0 0 0 8px rgba(232,201,106,.12); }
-  .cc:hover .cc-play { opacity:1; transform:translate(-50%,-50%) scale(1); }
-  .cc-play-tri { width:0; height:0; border-top:6px solid transparent; border-bottom:6px solid transparent; border-left:11px solid #09090F; margin-left:3px; }
-
-
-/* ── DETAIL PANEL ── */
-  .dp-overlay { position:fixed; inset:0; background:rgba(0,0,0,.78); z-index:800; backdrop-filter:blur(8px); animation:dp-in .3s forwards; display:flex; align-items:center; justify-content:center; padding:20px; }
-  @keyframes dp-in { from{opacity:0} to{opacity:1} }
-  .dp-panel { position:relative; width:min(660px,100%); max-height:90vh; background:#0C0C16; overflow-y:auto; z-index:801; scrollbar-width:thin; scrollbar-color:rgba(201,168,76,.2) transparent; animation:dp-pop .38s cubic-bezier(.16,1,.3,1) forwards; border:1px solid rgba(201,168,76,.09); }
-  @keyframes dp-pop { from{opacity:0;transform:scale(.94) translateY(24px)} to{opacity:1;transform:none} }
-  .dp-panel::-webkit-scrollbar { width:4px; }
-  .dp-panel::-webkit-scrollbar-thumb { background:rgba(201,168,76,.2); }
-  .dp-close { position:absolute; top:14px; right:14px; background:rgba(245,240,232,.08); border:1px solid rgba(245,240,232,.15); color:rgba(245,240,232,.7); width:34px; height:34px; border-radius:50%; cursor:pointer; font-size:1.1rem; display:flex; align-items:center; justify-content:center; z-index:10; transition:all .2s; }
-  .dp-close:hover { background:rgba(245,240,232,.15); color:#fff; }
-  .dp-video-head { display:flex; justify-content:center; padding:44px 0 28px; }
-  .dp-short { width:210px; aspect-ratio:9/16; position:relative; overflow:hidden; cursor:pointer; flex-shrink:0; }
-  .dp-short-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:brightness(.6) saturate(.7); }
-  .dp-short-play { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:52px; height:52px; border-radius:50%; display:flex; align-items:center; justify-content:center; z-index:2; transition:transform .2s; }
-  .dp-short:hover .dp-short-play { transform:translate(-50%,-50%) scale(1.12); }
-  .dp-video-tri { width:0; height:0; border-top:9px solid transparent; border-bottom:9px solid transparent; border-left:16px solid #09090F; margin-left:3px; }
-  .dp-meta { padding:0 40px 8px; text-align:center; }
-  .dp-cat-badge { display:inline-flex; align-items:center; gap:6px; font-family:'Cinzel',serif; font-size:.46rem; letter-spacing:.3em; text-transform:uppercase; padding:4px 12px; border:1px solid; margin-bottom:12px; }
-  .dp-name { font-family:'Cinzel Decorative',serif; font-size:clamp(1.5rem,4vw,2.1rem); letter-spacing:.04em; line-height:1.1; margin-bottom:6px; }
-  .dp-epoque { font-family:'Cinzel',serif; font-size:.52rem; letter-spacing:.2em; color:rgba(212,201,176,.5); text-transform:uppercase; }
-  .dp-body { padding:24px 40px 32px; }
-  .dp-section-title { font-family:'Cinzel',serif; font-size:.5rem; letter-spacing:.35em; text-transform:uppercase; margin-bottom:14px; }
-  .dp-bio { font-style:italic; font-size:clamp(.92rem,1.4vw,1.02rem); color:rgba(212,201,176,.78); line-height:1.95; }
-  .dp-divider { height:1px; background:linear-gradient(to right,transparent,rgba(201,168,76,.2),transparent); margin:28px 0; }
-  .dp-sugg { padding:0 40px 48px; }
-  .dp-sugg-row { display:flex; gap:14px; overflow-x:auto; scrollbar-width:none; padding-bottom:4px; }
-  .dp-sugg-row::-webkit-scrollbar { display:none; }
-  .dp-sugg-card { flex:0 0 108px; cursor:pointer; transition:opacity .2s; }
-  .dp-sugg-card:hover { opacity:.75; }
-  .dp-sugg-img-wrap { width:108px; aspect-ratio:2/3; overflow:hidden; position:relative; margin-bottom:8px; }
-  .dp-sugg-img { width:100%; height:100%; object-fit:cover; filter:brightness(.7); transition:filter .2s; }
-  .dp-sugg-card:hover .dp-sugg-img { filter:brightness(.95); }
-  .dp-sugg-name { font-family:'Cinzel',serif; font-size:.5rem; letter-spacing:.06em; color:rgba(212,201,176,.65); line-height:1.35; }
-  .dp-sugg-epoque { font-size:.7rem; color:rgba(212,201,176,.35); margin-top:3px; font-style:italic; }
-
-  /* ── FOOTER ── */
-  .cfoot { display:flex; align-items:center; gap:20px; padding:40px clamp(24px,5%,80px) 32px; border-top:1px solid rgba(201,168,76,.07); }
-  .cfoot-line { flex:1; height:1px; background:linear-gradient(to right,rgba(201,168,76,.15),transparent); }
-  .cfoot-line.r { background:linear-gradient(to left,rgba(201,168,76,.15),transparent); }
-  .cfoot-logo { cursor:pointer; opacity:.6; transition:opacity .3s; }
-  .cfoot-logo:hover { opacity:1; }
-
-  @media(max-width:768px) { .cn-links{display:none} .ch-title{font-size:clamp(2rem,9vw,3.2rem)} .cc{width:132px} }
-`;
-
-// ── DA CONFIG ─────────────────────────────────────────────────────────────────
-
-const DA = {
-  rome: {
-    bg: '#0D0404',
-    bgImg: null,
-    pattern: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='50'%3E%3Ctext x='60' y='34' text-anchor='middle' font-size='12' font-family='Georgia%2Cserif' fill='rgba(196%2C83%2C58%2C.1)' letter-spacing='6'%3ESPQR%3C/text%3E%3C/svg%3E")`,
-    glow: `radial-gradient(ellipse at 40% 50%,rgba(196,83,58,.18) 0%,transparent 60%)`,
-    accent: '#C4533A', titleColor: '#E8A090',
-    label: 'S · P · Q · R', sublabel: 'Senatus Populusque Romanus', deco: '⚔',
-    watermark: 'ROMA',
-  },
-  'rois-france': {
-    bg: '#04070E',
-    bgImg: null,
-    pattern: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath d='M18 54 L18 36 L28 44 L40 20 L52 44 L62 36 L62 54 Z' fill='none' stroke='rgba(74%2C114%2C184%2C.13)' stroke-width='1.3'/%3E%3Crect x='16' y='54' width='48' height='6' rx='1.5' fill='none' stroke='rgba(74%2C114%2C184%2C.1)' stroke-width='1'/%3E%3Ccircle cx='40' cy='20' r='2.5' fill='rgba(74%2C114%2C184%2C.12)'/%3E%3Ccircle cx='18' cy='36' r='2' fill='rgba(74%2C114%2C184%2C.1)'/%3E%3Ccircle cx='62' cy='36' r='2' fill='rgba(74%2C114%2C184%2C.1)'/%3E%3C/svg%3E")`,
-    glow: `radial-gradient(ellipse at 50% 40%,rgba(74,114,184,.18) 0%,transparent 60%)`,
-    accent: '#4A72B8', titleColor: '#90B0E0',
-    label: '⚜  MONARCHIE FRANÇAISE  ⚜', sublabel: 'Rex Francorum · La Couronne Capétienne', deco: '⚜',
-    watermark: 'REX',
-  },
-  'femmes-pouvoir': {
-    bg: '#0A0408',
-    bgImg: null,
-    pattern: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='70'%3E%3Ccircle cx='35' cy='32' r='10' fill='none' stroke='rgba(160%2C82%2C138%2C.12)' stroke-width='1'/%3E%3Ccircle cx='35' cy='20' r='6' fill='none' stroke='rgba(160%2C82%2C138%2C.1)' stroke-width='1'/%3E%3Ccircle cx='47' cy='26' r='6' fill='none' stroke='rgba(160%2C82%2C138%2C.1)' stroke-width='1'/%3E%3Ccircle cx='47' cy='38' r='6' fill='none' stroke='rgba(160%2C82%2C138%2C.1)' stroke-width='1'/%3E%3Ccircle cx='35' cy='44' r='6' fill='none' stroke='rgba(160%2C82%2C138%2C.1)' stroke-width='1'/%3E%3Ccircle cx='23' cy='38' r='6' fill='none' stroke='rgba(160%2C82%2C138%2C.1)' stroke-width='1'/%3E%3Ccircle cx='23' cy='26' r='6' fill='none' stroke='rgba(160%2C82%2C138%2C.1)' stroke-width='1'/%3E%3Cline x1='35' y1='42' x2='35' y2='58' stroke='rgba(160%2C82%2C138%2C.09)' stroke-width='1'/%3E%3C/svg%3E")`,
-    glow: `radial-gradient(ellipse at 60% 50%,rgba(160,82,138,.18) 0%,transparent 60%)`,
-    accent: '#A0528A', titleColor: '#D890C0',
-    label: '♛  RÉGINES & IMPÉRATRICES  ♛', sublabel: "Celles qui ont gouverné l'Histoire", deco: '♛',
-    watermark: 'REGINA',
-  },
-  'legendes-mers': {
-    bg: '#020609',
-    bgImg: null,
-    pattern: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cline x1='50' y1='8' x2='50' y2='92' stroke='rgba(26%2C171%2C204%2C.1)' stroke-width='.8'/%3E%3Cline x1='8' y1='50' x2='92' y2='50' stroke='rgba(26%2C171%2C204%2C.1)' stroke-width='.8'/%3E%3Cline x1='20' y1='20' x2='80' y2='80' stroke='rgba(26%2C171%2C204%2C.06)' stroke-width='.8'/%3E%3Cline x1='80' y1='20' x2='20' y2='80' stroke='rgba(26%2C171%2C204%2C.06)' stroke-width='.8'/%3E%3Ccircle cx='50' cy='50' r='5' fill='none' stroke='rgba(26%2C171%2C204%2C.13)' stroke-width='.8'/%3E%3Ccircle cx='50' cy='50' r='18' fill='none' stroke='rgba(26%2C171%2C204%2C.08)' stroke-width='.8'/%3E%3Ccircle cx='50' cy='50' r='36' fill='none' stroke='rgba(26%2C171%2C204%2C.05)' stroke-width='.8'/%3E%3C/svg%3E")`,
-    glow: `radial-gradient(ellipse at 30% 60%,rgba(26,171,204,.32) 0%,transparent 55%)`,
-    accent: '#1AABCC', titleColor: '#5DD8F0',
-    label: '⚓  TERRA INCOGNITA  ⚓', sublabel: 'Aventuriers, Corsaires & Explorateurs', deco: '⚓',
-    watermark: 'MARE',
-  },
-  'legendes-asie': {
-    bg: '#030809',
-    bgImg: null,
-    pattern: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Ctext x='45' y='62' text-anchor='middle' font-size='52' fill='rgba(107%2C154%2C90%2C.09)'%3E%E9%BE%8D%3C/text%3E%3C/svg%3E")`,
-    glow: `radial-gradient(ellipse at 70% 40%,rgba(107,154,90,.15) 0%,transparent 55%)`,
-    accent: '#6B9A5A', titleColor: '#98C888',
-    label: '龍  EXTRÊME-ORIENT  龍', sublabel: "Empereurs, Guerriers & Sages de l'Orient", deco: '龍',
-    watermark: '東方',
-  },
-  philosophes: {
-    bg: '#070709',
-    bgImg: null,
-    pattern: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='60'%3E%3Crect x='6' y='10' width='10' height='38' rx='1' fill='none' stroke='rgba(160%2C144%2C96%2C.11)' stroke-width='.9'/%3E%3Crect x='18' y='16' width='12' height='32' rx='1' fill='none' stroke='rgba(160%2C144%2C96%2C.11)' stroke-width='.9'/%3E%3Crect x='32' y='8' width='9' height='40' rx='1' fill='none' stroke='rgba(160%2C144%2C96%2C.11)' stroke-width='.9'/%3E%3Crect x='43' y='14' width='13' height='34' rx='1' fill='none' stroke='rgba(160%2C144%2C96%2C.11)' stroke-width='.9'/%3E%3Crect x='58' y='6' width='8' height='42' rx='1' fill='none' stroke='rgba(160%2C144%2C96%2C.11)' stroke-width='.9'/%3E%3Crect x='68' y='12' width='11' height='36' rx='1' fill='none' stroke='rgba(160%2C144%2C96%2C.11)' stroke-width='.9'/%3E%3Cline x1='4' y1='48' x2='86' y2='48' stroke='rgba(160%2C144%2C96%2C.08)' stroke-width='.8'/%3E%3C/svg%3E")`,
-    glow: `radial-gradient(ellipse at 50% 50%,rgba(160,144,96,.12) 0%,transparent 60%)`,
-    accent: '#A09060', titleColor: '#C8B880',
-    label: '◈  PENSEURS & SAGES  ◈', sublabel: "La Quête de la Vérité à travers les âges", deco: '◈',
-    watermark: 'SOPHIA',
-  },
+/* ─────────────────────────────────────────────
+   UNIVERSE COLORS
+───────────────────────────────────────────── */
+const UNIVERSE_COLORS = {
+  rome: '#c0392b',
+  'rois-france': '#c9a84c',
+  'femmes-pouvoir': '#8e44ad',
+  'legendes-mers': '#1a6b8a',
+  'legendes-asie': '#27ae60',
+  philosophes: '#7f8c8d',
+  'mythologie-grecque': '#1a237e',
 };
 
-// ── VERTICALS DATA ────────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────────
+   UNIVERSES CONFIG
+───────────────────────────────────────────── */
+const UNIVERSES = [
+  { id: 'rome', name: 'Rome', icon: 'ROME', color: '#c0392b', sub: "L'Empire Éternel" },
+  { id: 'rois-france', name: 'Rois de France', icon: 'REX', color: '#c9a84c', sub: 'La Couronne & le Destin' },
+  { id: 'femmes-pouvoir', name: 'Femmes de Pouvoir', icon: 'REGINA', color: '#8e44ad', sub: "Celles qui ont changé l'Histoire" },
+  { id: 'legendes-mers', name: 'Légendes des Mers', icon: 'MARE', color: '#1a6b8a', sub: "Les conquérants de l'Océan" },
+  { id: 'legendes-asie', name: "Légendes d'Asie", icon: '東方', color: '#27ae60', sub: "Les titans de l'Orient" },
+  { id: 'philosophes', name: 'Philosophes', icon: 'SOPHIA', color: '#7f8c8d', sub: 'Penseurs & Sages' },
+];
 
-const VERTICALS = [
+/* ─────────────────────────────────────────────
+   CHARACTERS ARRAY
+───────────────────────────────────────────── */
+const CHARACTERS = [
   {
-    id: 'rome', titre: 'Rome', subtitle: "L'Empire Éternel",
+    id: 'jules-cesar',
+    name: 'Jules César',
+    dates: '100 — 44 av. J-C',
+    universe: 'rome',
+    tags: ['rome', 'conquerants', 'destins-tragiques', 'top10'],
+    birth_year: -100,
+    is_premium: false,
+    isNew: false,
+    duration: '1:02',
+    img: 'https://picsum.photos/seed/jules-cesar-portrait/400/600',
     heroImg: 'https://picsum.photos/seed/rome-colosseum/1600/900',
-    heroDesc: "Des origines légendaires à la chute de l'Empire, les destins de ceux qui ont fait Rome.",
-    videos: [
-      { id: 'r1', titre: 'Jules César', desc: "La chute d'un titan", img: 'https://picsum.photos/seed/julius-caesar-rome/400/700', duration: '1:02', isNew: true, epoque: '100 — 44 av. J.-C.', bio: "Général, homme d'État et dictateur romain, Jules César a repoussé les frontières de Rome jusqu'en Gaule avant d'être assassiné aux Ides de Mars. [Description complète à rédiger]" },
-      { id: 'r2', titre: 'Marc Aurèle', desc: 'Le philosophe-roi', img: 'https://picsum.photos/seed/marcus-aurelius-rome/400/700', duration: '0:58', epoque: '121 — 180 ap. J.-C.', bio: "Dernier des Cinq Bons Empereurs, Marc Aurèle est aussi l'auteur des Pensées pour moi-même, chef-d'œuvre de la philosophie stoïcienne. [Description complète à rédiger]" },
-      { id: 'r3', titre: 'Néron', desc: 'La folie du pouvoir', img: 'https://picsum.photos/seed/nero-emperor/400/700', duration: '1:00', epoque: '37 — 68 ap. J.-C.', bio: "Dernier empereurjulio-claudien, Néron reste associé à la tyrannie, à l'incendie de Rome et aux premières persécutions chrétiennes. [Description complète à rédiger]" },
-      { id: 'r4', titre: 'Auguste', desc: 'Le premier des Césars', img: 'https://picsum.photos/seed/augustus-caesar/400/700', duration: '1:03', epoque: '63 av. J.-C. — 14 ap. J.-C.', bio: "Fondateur du Principat, Auguste instaure la Pax Romana et transforme Rome en capitale monumentale. [Description complète à rédiger]" },
-      { id: 'r5', titre: 'Spartacus', desc: "L'esclave rebelle", img: 'https://picsum.photos/seed/spartacus-rebel/400/700', duration: '0:59', isNew: true, epoque: '111 — 71 av. J.-C.', bio: "Chef de la troisième guerre servile, Spartacus mena 120 000 esclaves en révolte contre Rome avant d'être défait par Crassus. [Description complète à rédiger]" },
-      { id: 'r6', titre: 'Cléopâtre VII', desc: 'La reine et Rome', img: 'https://picsum.photos/seed/cleopatra-rome/400/700', duration: '1:01', epoque: '69 — 30 av. J.-C.', bio: "Dernière reine ptolémaïque d'Égypte, Cléopâtre allia Rome à son destin en séduisant César puis Marc Antoine. [Description complète à rédiger]" },
-      { id: 'r7', titre: 'Cicéron', desc: 'La plume de la République', img: 'https://picsum.photos/seed/cicero-republic/400/700', duration: '0:57', epoque: '106 — 43 av. J.-C.', bio: "Orateur, avocat et philosophe, Cicéron incarne les idéaux de la République romaine face aux ambitions de César. [Description complète à rédiger]" },
-    ]
+    bio: "Général et homme d'État romain, Jules César transforma la République en Empire par la force de son génie militaire et politique. Ses conquêtes des Gaules étendirent Rome jusqu'aux confins de l'Europe, forgeant une légende qui résonne encore deux millénaires plus tard. Assassiné aux Ides de Mars 44 av. J-C, il devint le symbole éternel du pouvoir absolu et de la trahison.",
   },
   {
-    id: 'rois-france', titre: 'Rois de France', subtitle: 'La Couronne & le Destin',
-    videos: [
-      { id: 'rf1', titre: 'Louis XIV', desc: 'Le Roi-Soleil', img: 'https://picsum.photos/seed/louis14-versailles/400/700', duration: '1:02', isNew: true, epoque: '1638 — 1715', bio: "Le plus long règne d'Europe. Louis XIV incarne la monarchie absolue, bâtit Versailles et place la France au sommet de sa puissance. [Description complète à rédiger]" },
-      { id: 'rf2', titre: 'Charlemagne', desc: "L'Empire carolingien", img: 'https://picsum.photos/seed/charlemagne-empire/400/700', duration: '0:59', epoque: '742 — 814', bio: "Couronné Empereur d'Occident en l'an 800, Charlemagne unifie l'Europe et jette les bases de la civilisation médiévale. [Description complète à rédiger]" },
-      { id: 'rf3', titre: 'Henri IV', desc: 'Paris vaut bien une messe', img: 'https://picsum.photos/seed/henri4-france/400/700', duration: '1:01', epoque: '1553 — 1610', bio: "Huguenot converti, Henri IV met fin aux guerres de religion par l'Édit de Nantes et relance la prospérité française. [Description complète à rédiger]" },
-      { id: 'rf4', titre: 'François Ier', desc: 'Le roi chevalier', img: 'https://picsum.photos/seed/francois1-renaissance/400/700', duration: '0:58', epoque: '1494 — 1547', bio: "Mécène de la Renaissance, rival de Charles Quint, François Ier invite Léonard de Vinci et fait entrer la France dans la modernité culturelle. [Description complète à rédiger]" },
-      { id: 'rf5', titre: 'Louis XVI', desc: "La fin d'un monde", img: 'https://picsum.photos/seed/louis16-revolution/400/700', duration: '1:03', epoque: '1754 — 1793', bio: "Dernier roi de France avant la Révolution, Louis XVI fut guillotiné place de la Révolution le 21 janvier 1793. [Description complète à rédiger]" },
-      { id: 'rf6', titre: 'Napoléon', desc: "L'aigle de la France", img: 'https://picsum.photos/seed/napoleon-france/400/700', duration: '1:04', isNew: true, epoque: '1769 — 1821', bio: "Général corse devenu Empereur des Français, Napoléon remodela l'Europe entière avant son exil à Sainte-Hélène. [Description complète à rédiger]" },
-    ]
+    id: 'marie-antoinette',
+    name: 'Marie-Antoinette',
+    dates: '1755 — 1793',
+    universe: 'rois-france',
+    tags: ['rois', 'femmes', 'destins-tragiques', 'top10', 'nouveau'],
+    birth_year: 1755,
+    is_premium: false,
+    isNew: true,
+    duration: '0:58',
+    img: 'https://picsum.photos/seed/marie-antoinette-portrait/400/600',
+    heroImg: null,
+    bio: "Archiduchesse d'Autriche devenue reine de France à dix-neuf ans, Marie-Antoinette incarna l'éclat et les excès de Versailles dans une époque de bouleversements. Son destin bascula avec la Révolution française, transformant la reine en symbole de l'Ancien Régime aux yeux d'un peuple affamé. Guillotinée en 1793, elle laisse une image ambivalente, entre victime d'un système et actrice de sa propre tragédie.",
   },
   {
-    id: 'femmes-pouvoir', titre: 'Femmes de Pouvoir', subtitle: "Celles qui ont changé l'Histoire",
-    videos: [
-      { id: 'fp1', titre: 'Marie-Antoinette', desc: 'La reine sacrifiée', img: 'https://picsum.photos/seed/marie-antoinette-queen/400/700', duration: '1:02', isNew: true, epoque: '1755 — 1793', bio: "Archiduchesse d'Autriche et reine de France, Marie-Antoinette devient le symbole de la déconnexion de la monarchie avec le peuple. [Description complète à rédiger]" },
-      { id: 'fp2', titre: 'Cléopâtre', desc: 'La dernière pharaonne', img: 'https://picsum.photos/seed/cleopatra-pharaon/400/700', duration: '1:01', epoque: '69 — 30 av. J.-C.', bio: "Seule pharaonne à maîtriser la langue égyptienne depuis des siècles, Cléopâtre dirigea l'Égypte avec un génie politique hors du commun. [Description complète à rédiger]" },
-      { id: 'fp3', titre: "Aliénor d'Aquitaine", desc: 'La reine des deux royaumes', img: 'https://picsum.photos/seed/alienor-aquitaine/400/700', duration: '0:59', epoque: '1122 — 1204', bio: "Reine de France puis d'Angleterre, mécène et femme politique, Aliénor incarne la femme médiévale la plus puissante d'Europe. [Description complète à rédiger]" },
-      { id: 'fp4', titre: 'Nefertiti', desc: 'La beauté qui vint', img: 'https://picsum.photos/seed/nefertiti-egypt/400/700', duration: '0:58', epoque: '1370 — 1330 av. J.-C.', bio: "Grande Épouse royale d'Akhenaton, Nefertiti joua un rôle central dans la révolution religieuse atoniste. [Description complète à rédiger]" },
-      { id: 'fp5', titre: 'Catherine de Médicis', desc: 'La régente de France', img: 'https://picsum.photos/seed/catherine-medici/400/700', duration: '1:00', epoque: '1519 — 1589', bio: "Régente pendant les guerres de religion, Catherine de Médicis gouverna la France à travers trois de ses fils. [Description complète à rédiger]" },
-      { id: 'fp6', titre: 'Isabelle de Castille', desc: 'La reine catholique', img: 'https://picsum.photos/seed/isabelle-castille/400/700', duration: '1:01', epoque: '1451 — 1504', bio: "En finançant Christophe Colomb et en unifiant l'Espagne avec Ferdinand d'Aragon, Isabelle change le cours de l'Histoire mondiale. [Description complète à rédiger]" },
-    ]
+    id: 'louis-xvi',
+    name: 'Louis XVI',
+    dates: '1754 — 1793',
+    universe: 'rois-france',
+    tags: ['rois', 'destins-tragiques', 'top10'],
+    birth_year: 1754,
+    is_premium: false,
+    isNew: false,
+    duration: '0:55',
+    img: 'https://picsum.photos/seed/louis-xvi-portrait/400/600',
+    heroImg: null,
+    bio: "Dernier roi de France de l'Ancien Régime, Louis XVI accéda au trône dans un royaume au bord de la banqueroute et de la révolte sociale. Homme sincère mais indécis, il tenta des réformes sans pouvoir endiguer la vague révolutionnaire qui balaya son règne. Jugé et décapité en janvier 1793, il reste le symbole d'une monarchie incapable de se réinventer face au souffle de l'Histoire.",
   },
   {
-    id: 'legendes-mers', titre: 'Légendes des Mers', subtitle: "Les conquérants de l'Océan",
-    videos: [
-      { id: 'lm1', titre: 'Barbe-Noire', desc: 'La terreur des mers', img: 'https://picsum.photos/seed/blackbeard-pirate/400/700', duration: '1:00', isNew: true, epoque: '1680 — 1718', bio: "Né Edward Teach, Barbe-Noire terrorisa les Caraïbes et la côte américaine à bord du Queen Anne's Revenge. [Description complète à rédiger]" },
-      { id: 'lm2', titre: 'Christophe Colomb', desc: "La traversée de l'impossible", img: 'https://picsum.photos/seed/columbus-discovery/400/700', duration: '1:02', epoque: '1451 — 1506', bio: "En atteignant l'Amérique en 1492, Colomb ouvrit une ère nouvelle dans l'histoire de l'humanité. [Description complète à rédiger]" },
-      { id: 'lm3', titre: 'Vasco de Gama', desc: 'La route des Indes', img: 'https://picsum.photos/seed/vasco-gama/400/700', duration: '0:59', epoque: '1469 — 1524', bio: "Premier Européen à relier l'Europe aux Indes par la mer, Vasco de Gama ouvrit la route maritime qui brisa le monopole arabe. [Description complète à rédiger]" },
-      { id: 'lm4', titre: 'Magellan', desc: 'Le tour du monde', img: 'https://picsum.photos/seed/magellan-circumnavigation/400/700', duration: '1:01', epoque: '1480 — 1521', bio: "Chef de la première expédition à circumnaviger le globe, Magellan mourut aux Philippines avant d'en voir l'aboutissement. [Description complète à rédiger]" },
-      { id: 'lm5', titre: 'Robert Surcouf', desc: 'Le corsaire malouin', img: 'https://picsum.photos/seed/surcouf-corsaire/400/700', duration: '0:58', epoque: '1773 — 1827', bio: "Corsaire saint-maloin, Surcouf captura plus de 40 navires anglais dans l'océan Indien, devenant la bête noire de la Royal Navy. [Description complète à rédiger]" },
-      { id: 'lm6', titre: 'Francis Drake', desc: "Le corsaire de la Reine", img: 'https://picsum.photos/seed/francis-drake/400/700', duration: '1:00', epoque: '1540 — 1596', bio: "Pirate pour l'Espagne, héros pour l'Angleterre, Francis Drake circumnavigua le globe et contribua à la défaite de l'Invincible Armada. [Description complète à rédiger]" },
-    ]
+    id: 'louis-xiv',
+    name: 'Louis XIV',
+    dates: '1638 — 1715',
+    universe: 'rois-france',
+    tags: ['rois', 'top10'],
+    birth_year: 1638,
+    is_premium: false,
+    isNew: false,
+    duration: '1:05',
+    img: 'https://picsum.photos/seed/louis-xiv-portrait/400/600',
+    heroImg: null,
+    bio: "Surnommé le Roi-Soleil, Louis XIV régna soixante-douze ans sur la France, le règne le plus long de l'histoire monarchique européenne. Il fit de Versailles le centre du monde civilisé, concentrant toute l'autorité en sa personne et imposant la grandeur française à l'Europe entière. Son absolutisme rayonnant redessina la carte politique du continent tout en façonnant une culture et un art qui influencent encore notre époque.",
   },
   {
-    id: 'legendes-asie', titre: "Légendes d'Asie", subtitle: "Les titans de l'Orient",
-    videos: [
-      { id: 'la1', titre: 'Gengis Khan', desc: "L'empire infini", img: 'https://picsum.photos/seed/genghis-mongol/400/700', duration: '1:02', epoque: '1162 — 1227', bio: "Fondateur du plus grand empire contigu de l'histoire, Gengis Khan unifia les tribus mongoles et conquit l'Eurasie. [Description complète à rédiger]" },
-      { id: 'la2', titre: 'Mulan', desc: 'La guerrière légendaire', img: 'https://picsum.photos/seed/mulan-china/400/700', duration: '0:59', isNew: true, epoque: 'Époque légendaire', bio: "Figure légendaire de la Chine ancienne, Hua Mulan s'engagea sous un nom masculin pour protéger son père vieillissant. [Description complète à rédiger]" },
-      { id: 'la3', titre: 'Zheng He', desc: "L'amiral des sept mers", img: 'https://picsum.photos/seed/zheng-china/400/700', duration: '1:01', epoque: '1371 — 1433', bio: "Amiral eunuque de la cour des Ming, Zheng He mena sept expéditions gigantesques vers l'Afrique et l'Asie du Sud-Est. [Description complète à rédiger]" },
-      { id: 'la4', titre: 'Sun Tzu', desc: "L'art de la guerre", img: 'https://picsum.photos/seed/sun-tzu-china/400/700', duration: '0:58', epoque: 'Ve siècle av. J.-C.', bio: "Stratège et philosophe militaire, Sun Tzu est l'auteur de L'Art de la Guerre, manuel toujours étudié 2500 ans plus tard. [Description complète à rédiger]" },
-      { id: 'la5', titre: 'Ashoka', desc: "L'empereur de la paix", img: 'https://picsum.photos/seed/ashoka-india/400/700', duration: '1:00', epoque: '304 — 232 av. J.-C.', bio: "Après avoir conquis l'Inde par le sang, Ashoka se convertit au bouddhisme et gouverna avec une compassion sans précédent. [Description complète à rédiger]" },
-      { id: 'la6', titre: 'Wu Zetian', desc: "L'unique impératrice", img: 'https://picsum.photos/seed/wu-empress-china/400/700', duration: '1:01', isNew: true, epoque: '624 — 705', bio: "Seule femme à avoir régné en son propre nom sur la Chine, Wu Zetian gouverna l'Empire du Milieu pendant plus de 50 ans. [Description complète à rédiger]" },
-    ]
+    id: 'charlemagne',
+    name: 'Charlemagne',
+    dates: '742 — 814',
+    universe: 'rois-france',
+    tags: ['rois', 'conquerants'],
+    birth_year: 742,
+    is_premium: false,
+    isNew: false,
+    duration: '1:00',
+    img: 'https://picsum.photos/seed/charlemagne-portrait/400/600',
+    heroImg: null,
+    bio: "Roi des Francs puis premier Empereur d'Occident couronné en l'an 800, Charlemagne unifia une grande partie de l'Europe sous sa bannière par la force des armes et de la foi chrétienne. Il entreprit une renaissance culturelle sans précédent, favorisant l'éducation et les arts dans un monde sorti à peine des ténèbres du Haut Moyen Âge. Père de l'Europe moderne selon certains historiens, son empire posa les fondations des nations françaises et allemandes.",
   },
   {
-    id: 'philosophes', titre: 'Philosophes', subtitle: 'Les pères de la pensée',
-    videos: [
-      { id: 'ph1', titre: 'Socrate', desc: 'Je sais que je ne sais rien', img: 'https://picsum.photos/seed/socrates-athen/400/700', duration: '0:59', epoque: '470 — 399 av. J.-C.', bio: "Le père fondateur de la philosophie occidentale, condamné à mort pour impiété et corruption de la jeunesse athénienne. [Description complète à rédiger]" },
-      { id: 'ph2', titre: 'Aristote', desc: 'Le maître de ceux qui savent', img: 'https://picsum.photos/seed/aristotle-athens/400/700', duration: '1:01', epoque: '384 — 322 av. J.-C.', bio: "Disciple de Platon et précepteur d'Alexandre le Grand, Aristote posa les bases de la logique, de la biologie et de la politique. [Description complète à rédiger]" },
-      { id: 'ph3', titre: 'Confucius', desc: "La sagesse de l'Orient", img: 'https://picsum.photos/seed/confucius-wisdom/400/700', duration: '0:58', isNew: true, epoque: '551 — 479 av. J.-C.', bio: "Penseur chinois dont les enseignements sur la vertu, la famille et la gouvernance influencent encore deux milliards de personnes. [Description complète à rédiger]" },
-      { id: 'ph4', titre: 'Platon', desc: 'Les ombres de la caverne', img: 'https://picsum.photos/seed/plato-republic/400/700', duration: '1:00', epoque: '428 — 348 av. J.-C.', bio: "Auteur de La République, Platon développe la théorie des Idées et pose les fondements de la philosophie idéaliste. [Description complète à rédiger]" },
-      { id: 'ph5', titre: 'Nietzsche', desc: 'Dieu est mort', img: 'https://picsum.photos/seed/nietzsche-modern/400/700', duration: '1:02', epoque: '1844 — 1900', bio: "Philosophe de la volonté de puissance, Nietzsche bouleversa la pensée occidentale en proclamant la mort de Dieu et l'avènement du Surhomme. [Description complète à rédiger]" },
-      { id: 'ph6', titre: 'Voltaire', desc: "Écrasez l'infâme", img: 'https://picsum.photos/seed/voltaire-enlightenment/400/700', duration: '0:57', epoque: '1694 — 1778', bio: "Figure majeure des Lumières, Voltaire combattit l'obscurantisme religieux et l'absolutisme avec une plume redoutable. [Description complète à rédiger]" },
-    ]
+    id: 'catherine-de-medicis',
+    name: 'Catherine de Médicis',
+    dates: '1519 — 1589',
+    universe: 'femmes-pouvoir',
+    tags: ['femmes', 'top10', 'defie-epoque'],
+    birth_year: 1519,
+    is_premium: false,
+    isNew: false,
+    duration: '0:57',
+    img: 'https://picsum.photos/seed/catherine-de-medicis-portrait/400/600',
+    heroImg: null,
+    bio: "Reine puis régente de France, Catherine de Médicis gouverna dans l'ombre et dans la lumière pendant plus de trente ans, manœuvrant avec habileté entre protestants et catholiques dans une France déchirée par les guerres de religion. Femme de culture héritière de la Renaissance florentine, elle introduisit le ballet à la cour de France et protégea les arts avec une passion éclairée. Sa responsabilité dans le massacre de la Saint-Barthélemy reste l'une des questions les plus débattues de l'historiographie française.",
+  },
+  {
+    id: 'cleopatre',
+    name: 'Cléopâtre',
+    dates: '69 — 30 av. J-C',
+    universe: 'femmes-pouvoir',
+    tags: ['femmes', 'top10', 'defie-epoque', 'destins-tragiques'],
+    birth_year: -69,
+    is_premium: false,
+    isNew: false,
+    duration: '1:03',
+    img: 'https://picsum.photos/seed/cleopatre-portrait/400/600',
+    heroImg: null,
+    bio: "Dernière souveraine du royaume ptolémaïque d'Égypte, Cléopâtre VII fut une reine d'une intelligence politique exceptionnelle, maîtrisant neuf langues et les subtilités de la diplomatie méditerranéenne. Ses alliances avec Jules César puis Marc Antoine représentèrent une stratégie lucide pour préserver l'indépendance égyptienne face à la puissance romaine grandissante. Sa mort volontaire à trente-neuf ans, après la défaite d'Actium, clôtura l'ère des pharaons et ouvrit celle de la domination romaine sur l'Orient.",
+  },
+  {
+    id: 'jeanne-darc',
+    name: "Jeanne d'Arc",
+    dates: '1412 — 1431',
+    universe: 'femmes-pouvoir',
+    tags: ['femmes', 'destins-tragiques', 'defie-epoque', 'top10'],
+    birth_year: 1412,
+    is_premium: false,
+    isNew: false,
+    duration: '0:59',
+    img: 'https://picsum.photos/seed/jeanne-darc-portrait/400/600',
+    heroImg: null,
+    bio: "Jeune paysanne lorraine guidée par des voix célestes, Jeanne d'Arc prit la tête des armées françaises à dix-sept ans et renversa le cours de la guerre de Cent Ans en faisant sacrer Charles VII à Reims. Capturée par les Bourguignons puis vendue aux Anglais, elle fut jugée pour hérésie et brûlée vive à Rouen à l'âge de dix-neuf ans. Réhabilitée en 1456 et canonisée en 1920, elle demeure le symbole intemporel du courage féminin et de l'identité nationale française.",
+  },
+  {
+    id: 'tomoe-gozen',
+    name: 'Tomoe Gozen',
+    dates: 'v. 1157 — v. 1247',
+    universe: 'legendes-asie',
+    tags: ['asie', 'femmes', 'defie-epoque'],
+    birth_year: 1157,
+    is_premium: false,
+    isNew: false,
+    duration: '0:54',
+    img: 'https://picsum.photos/seed/tomoe-gozen-portrait/400/600',
+    heroImg: null,
+    bio: "Onna-musha légendaire du Japon médiéval, Tomoe Gozen fut l'une des rares femmes samouraïs à combattre aux côtés des plus grands guerriers de son époque. Célèbre pour sa beauté autant que pour sa maîtrise du katana et du tir à l'arc, elle accompagna le seigneur Minamoto no Yoshinaka dans ses batailles contre le clan Taira. Son histoire, transmise dans le Heike Monogatari, en fait l'archétype de la femme guerrière dans la culture japonaise.",
+  },
+  {
+    id: 'anne-bonny',
+    name: 'Anne Bonny',
+    dates: '1697 — v. 1782',
+    universe: 'legendes-mers',
+    tags: ['mers', 'femmes', 'defie-epoque'],
+    birth_year: 1697,
+    is_premium: false,
+    isNew: false,
+    duration: '0:52',
+    img: 'https://picsum.photos/seed/anne-bonny-portrait/400/600',
+    heroImg: null,
+    bio: "Née en Irlande et élevée en Caroline du Sud, Anne Bonny brisa toutes les conventions de son époque en rejoignant la piraterie des Caraïbes aux côtés du célèbre Calico Jack. Redoutée par ses ennemis pour sa férocité au combat, elle fut l'une des rares femmes pirates reconnues de l'âge d'or de la piraterie. Capturée en 1720, elle échappa mystérieusement à la pendaison et sa destinée finale reste enveloppée dans le mystère et la légende.",
+  },
+  {
+    id: 'magellan',
+    name: 'Magellan',
+    dates: '1480 — 1521',
+    universe: 'legendes-mers',
+    tags: ['mers', 'conquerants', 'destins-tragiques'],
+    birth_year: 1480,
+    is_premium: false,
+    isNew: false,
+    duration: '1:01',
+    img: 'https://picsum.photos/seed/magellan-portrait/400/600',
+    heroImg: null,
+    bio: "Navigateur portugais au service de l'Espagne, Ferdinand de Magellan organisa la première circumnavigation de la Terre, prouvant définitivement la rotondité du globe et l'existence d'un passage vers les Indes par l'ouest. Son périple de trois ans à travers des mers inconnues fut une épopée de courage et d'obstination, traversant les tempêtes du détroit qui porte aujourd'hui son nom. Tué aux Philippines lors de la bataille de Mactan en 1521, il ne vit jamais l'achèvement de son œuvre colossale.",
+  },
+  {
+    id: 'gengis-khan',
+    name: 'Gengis Khan',
+    dates: '1162 — 1227',
+    universe: 'legendes-asie',
+    tags: ['asie', 'conquerants'],
+    birth_year: 1162,
+    is_premium: false,
+    isNew: false,
+    duration: '1:04',
+    img: 'https://picsum.photos/seed/gengis-khan-portrait/400/600',
+    heroImg: null,
+    bio: "Fondateur et premier Grand Khan de l'Empire mongol, Gengis Khan unifia les tribus nomades de la steppe pour créer le plus grand empire continu de l'histoire humaine, s'étendant du Pacifique à la Caspienne. Stratège militaire de génie, il révolutionna l'art de la guerre par la mobilité de sa cavalerie et une organisation tactique d'une redoutable efficacité. Son héritage dépasse la conquête : il favorisa le commerce sur la Route de la Soie et permit un échange culturel sans précédent entre l'Orient et l'Occident.",
+  },
+  {
+    id: 'george-washington',
+    name: 'George Washington',
+    dates: '1732 — 1799',
+    universe: 'philosophes',
+    tags: ['defie-epoque', 'top10'],
+    birth_year: 1732,
+    is_premium: false,
+    isNew: false,
+    duration: '0:56',
+    img: 'https://picsum.photos/seed/george-washington-portrait/400/600',
+    heroImg: null,
+    bio: "Premier président des États-Unis d'Amérique, George Washington commanda les forces révolutionnaires lors de la guerre d'Indépendance et façonna les fondements d'une nouvelle nation fondée sur les principes des Lumières. Son refus de briguer un troisième mandat présidentiel établit un précédent démocratique fondamental qui définit encore la démocratie américaine. Vénéré comme le Père de la Nation, il incarne l'idéal républicain et l'abnégation au service de la chose publique.",
+  },
+  {
+    id: 'socrate',
+    name: 'Socrate',
+    dates: '470 — 399 av. J-C',
+    universe: 'philosophes',
+    tags: ['philo', 'destins-tragiques'],
+    birth_year: -470,
+    is_premium: false,
+    isNew: false,
+    duration: '0:53',
+    img: 'https://picsum.photos/seed/socrate-portrait/400/600',
+    heroImg: null,
+    bio: "Philosophe athénien considéré comme le père de la philosophie occidentale, Socrate n'écrivit jamais une ligne mais révolutionna la pensée humaine par sa méthode dialectique, l'ironie et la maïeutique. Accusé de corrompre la jeunesse et d'impiété envers les dieux de la cité, il fut condamné à mort par le tribunal athénien et choisit de boire la ciguë plutôt que de renier ses convictions. Sa mort volontaire, immortalisée par son disciple Platon, fit de lui le martyr éternel de la liberté de pensée.",
+  },
+  {
+    id: 'meduse',
+    name: 'Méduse',
+    dates: 'Temps mythiques',
+    universe: 'mythologie-grecque',
+    tags: ['mythologie-grecque'],
+    birth_year: null,
+    is_premium: true,
+    isNew: false,
+    duration: '0:48',
+    img: 'https://picsum.photos/seed/meduse-portrait/400/600',
+    heroImg: null,
+    bio: "Gorgone au regard pétrifiant, Méduse fut jadis une belle mortelle dont Poséidon s'éprit, avant qu'Athéna ne la transforme en monstre terrible aux cheveux de serpents. Seul Persée, guidé par les dieux et armé du bouclier-miroir d'Athéna, parvint à la décapiter sans croiser son regard fatal. De son sang jaillit Pégase, le cheval ailé, et sa tête tranchée devint l'une des armes les plus redoutables de la mythologie grecque, capable encore de pétrifier ses ennemis.",
   },
 ];
 
+/* ─────────────────────────────────────────────
+   EDITORIAL ROWS
+───────────────────────────────────────────── */
+const EDITORIAL_ROWS = [
+  { id: 'top10', label: 'Top 10 Anachrona', emoji: '🔥', filter: c => c.tags.includes('top10') },
+  { id: 'nouveau', label: 'Nouveau sur Anachrona', emoji: '⭐', filter: c => c.tags.includes('nouveau') },
+  { id: 'destins', label: 'Destins Tragiques', emoji: '💀', filter: c => c.tags.includes('destins-tragiques') },
+  { id: 'conquerants', label: 'Conquérants & Empereurs', emoji: '⚔', filter: c => c.tags.includes('conquerants') },
+  { id: 'femmes', label: 'Femmes de Pouvoir', emoji: '♛', filter: c => c.tags.includes('femmes') },
+  { id: 'defie', label: 'Ils ont défié leur époque', emoji: '✨', filter: c => c.tags.includes('defie-epoque') },
+  {
+    id: 'selection',
+    label: 'Notre sélection du jour',
+    emoji: '🎯',
+    filter: c => ['cleopatre', 'gengis-khan', 'louis-xiv', 'anne-bonny', 'socrate', 'charlemagne'].includes(c.id),
+  },
+];
 
+/* ─────────────────────────────────────────────
+   STYLES
+───────────────────────────────────────────── */
+const styles = `
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap');
 
-// ── DETAIL PANEL ──────────────────────────────────────────────────────────────
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-function DetailPanel({ video, vertical, onClose, onSelect }) {
-  const da = DA[vertical.id];
-  const suggestions = vertical.videos.filter(v => v.id !== video.id).slice(0, 6);
+body {
+  background: #0d0d0a;
+  color: #e8dcc8;
+  font-family: 'EB Garamond', Georgia, serif;
+  overflow-x: hidden;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+}
+
+/* NAV */
+.hn {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 48px;
+  height: 72px;
+  transition: background 0.4s ease, border-bottom 0.4s ease;
+}
+.hn.scrolled {
+  background: rgba(13,13,10,0.96);
+  border-bottom: 1px solid rgba(201,168,76,0.3);
+  backdrop-filter: blur(12px);
+}
+.hn-logo { cursor: pointer; display: flex; align-items: center; }
+.hn-links {
+  display: flex;
+  list-style: none;
+  gap: 32px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.hn-links li {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(232,220,200,0.65);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.hn-links li.active { color: #c9a84c; }
+.hn-links li:hover { color: #e8c96a; }
+.hn-right { display: flex; align-items: center; gap: 12px; }
+.hn-btn-myth {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  padding: 8px 18px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #7C3AED, #A78BFA);
+  color: #fff;
+  box-shadow: 0 0 18px rgba(124,58,237,0.5);
+  transition: box-shadow 0.3s, transform 0.2s;
+}
+.hn-btn-myth:hover {
+  box-shadow: 0 0 30px rgba(167,139,250,0.7);
+  transform: translateY(-1px);
+}
+.hn-btn-premium {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  padding: 8px 18px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #c9a84c, #e8c96a);
+  color: #0d0d0a;
+  font-weight: 700;
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+.hn-btn-premium:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 20px rgba(201,168,76,0.5);
+}
+
+/* HERO */
+.hh {
+  position: relative;
+  height: 100vh;
+  min-height: 600px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+.hh-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center top;
+  filter: brightness(0.38) saturate(0.6);
+  animation: hzoom 28s ease-in-out infinite alternate;
+  transform-origin: center center;
+}
+@keyframes hzoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.1); }
+}
+.hh-grad {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to right, rgba(13,13,10,0.92) 0%, rgba(13,13,10,0.55) 50%, rgba(13,13,10,0.1) 100%),
+    linear-gradient(to top, rgba(13,13,10,0.98) 0%, rgba(13,13,10,0.4) 35%, transparent 70%);
+}
+.hh-content {
+  position: relative;
+  z-index: 2;
+  padding: 0 64px 80px;
+  max-width: 620px;
+}
+.hh-badge {
+  display: inline-block;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: #c9a84c;
+  border: 1px solid rgba(201,168,76,0.5);
+  padding: 5px 14px;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+.hh-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(42px, 7vw, 88px);
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.0;
+  margin-bottom: 16px;
+  text-shadow: 0 2px 30px rgba(0,0,0,0.8);
+}
+.hh-sub {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 18px;
+  color: rgba(232,220,200,0.75);
+  margin-bottom: 32px;
+  line-height: 1.5;
+}
+.hh-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+.hh-btn-watch {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  padding: 13px 32px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #c9a84c, #e8c96a);
+  color: #0d0d0a;
+  font-weight: 700;
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+.hh-btn-watch:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,168,76,0.45); }
+.hh-btn-list {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  padding: 13px 32px;
+  border: 1px solid rgba(232,220,200,0.5);
+  border-radius: 4px;
+  cursor: pointer;
+  background: transparent;
+  color: #e8dcc8;
+  transition: border-color 0.2s, background 0.2s;
+}
+.hh-btn-list:hover { border-color: #c9a84c; background: rgba(201,168,76,0.08); }
+
+/* UNIVERSE BAND */
+.hub {
+  padding: 56px 48px 40px;
+}
+.hub-label {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(201,168,76,0.7);
+  margin-bottom: 28px;
+}
+.hub-track {
+  display: flex;
+  gap: 28px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding-bottom: 8px;
+}
+.hub-track::-webkit-scrollbar { display: none; }
+.hub-track { -ms-overflow-style: none; scrollbar-width: none; }
+.hub-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.hub-circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.08em;
+  border: 2px solid transparent;
+  transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+  text-align: center;
+  line-height: 1.3;
+  padding: 8px;
+}
+.hub-item:hover .hub-circle {
+  transform: scale(1.08);
+}
+.hub-name {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: rgba(232,220,200,0.75);
+  text-align: center;
+  max-width: 90px;
+  line-height: 1.3;
+}
+
+/* CHARACTER ROWS */
+.hs {
+  padding: 0 48px 48px;
+}
+.hs-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+  padding-left: 16px;
+  border-left: 3px solid #c9a84c;
+}
+.hs-head.universe-bar { border-left-color: var(--ucolor, #c9a84c); }
+.hs-emoji { font-size: 18px; }
+.hs-title {
+  font-family: 'Cinzel', serif;
+  font-size: 15px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #e8dcc8;
+}
+.hs-track {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding-bottom: 8px;
+}
+.hs-track::-webkit-scrollbar { display: none; }
+.hs-track { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* CHARACTER CARD */
+.hc {
+  flex-shrink: 0;
+  width: 154px;
+  cursor: pointer;
+}
+.hc-portrait {
+  position: relative;
+  width: 154px;
+  height: 231px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #1a1a16;
+}
+.hc-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease, filter 0.4s ease;
+}
+.hc:hover .hc-img {
+  transform: scale(1.06);
+  filter: brightness(0.65);
+}
+.hc-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.hc:hover .hc-overlay { opacity: 1; }
+.hc-overlay-text {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: #fff;
+  text-transform: uppercase;
+  background: rgba(201,168,76,0.2);
+  border: 1px solid rgba(201,168,76,0.6);
+  padding: 6px 14px;
+  border-radius: 2px;
+}
+.hc-badges {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.hc-badge-new {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: #e8c96a;
+  border: 1px solid #c9a84c;
+  padding: 2px 7px;
+  background: rgba(13,13,10,0.7);
+  text-transform: uppercase;
+}
+.hc-badge-lock {
+  font-size: 13px;
+  line-height: 1;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.8));
+}
+.hc-duration {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  color: rgba(232,220,200,0.8);
+  background: rgba(13,13,10,0.75);
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+.hc-info { padding: 8px 2px 0; }
+.hc-name {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: #e8dcc8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hc-dates {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 12px;
+  color: rgba(232,220,200,0.5);
+  margin-top: 2px;
+}
+
+/* SEPARATOR */
+.hsep {
+  border: none;
+  border-top: 1px solid rgba(201,168,76,0.15);
+  margin: 20px 48px 48px;
+}
+
+/* FOOTER */
+.hfooter {
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  border-top: 1px solid rgba(201,168,76,0.15);
+}
+.hfooter-tagline {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 15px;
+  color: rgba(232,220,200,0.4);
+  letter-spacing: 0.05em;
+}
+.hfooter-copy {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: rgba(232,220,200,0.25);
+  text-transform: uppercase;
+}
+
+/* TIKTOK FOOTER */
+.htk {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px 64px;
+  background: rgba(255,255,255,0.03);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.htk-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.htk-text h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  color: #e8dcc8;
+}
+.htk-text p {
+  font-family: 'EB Garamond', serif;
+  font-size: 14px;
+  font-style: italic;
+  color: rgba(232,220,200,0.55);
+  margin-top: 3px;
+}
+.htk-btn {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 11px 28px;
+  border-radius: 4px;
+  border: 1px solid rgba(232,220,200,0.35);
+  color: #e8dcc8;
+  background: transparent;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s;
+  cursor: pointer;
+}
+.htk-btn:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(232,220,200,0.6);
+}
+
+/* DETAIL PANEL */
+.dp-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: dpFadeIn 0.25s ease;
+}
+@keyframes dpFadeIn { from { opacity: 0; } to { opacity: 1; } }
+.dp-panel {
+  position: relative;
+  width: min(640px, 100%);
+  max-height: 90vh;
+  background: #0d0d1a;
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 8px;
+  overflow-y: auto;
+  animation: dpScaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.dp-panel::-webkit-scrollbar { width: 4px; }
+.dp-panel::-webkit-scrollbar-track { background: transparent; }
+.dp-panel::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.3); border-radius: 2px; }
+@keyframes dpScaleUp {
+  from { transform: scale(0.88); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.dp-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  background: rgba(13,13,10,0.75);
+  border: 1px solid rgba(201,168,76,0.3);
+  color: #e8dcc8;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.2s, border-color 0.2s;
+}
+.dp-close:hover { background: rgba(201,168,76,0.15); border-color: #c9a84c; }
+.dp-video-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 36px 24px 24px;
+  background: rgba(0,0,0,0.3);
+}
+.dp-video {
+  position: relative;
+  width: 200px;
+  height: 355px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #111;
+  flex-shrink: 0;
+}
+.dp-video-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.55);
+}
+.dp-play-btn {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dp-play-circle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.35);
+  transition: transform 0.2s, background 0.2s;
+  cursor: pointer;
+}
+.dp-play-circle:hover { transform: scale(1.1); background: rgba(0,0,0,0.55); }
+.dp-play-triangle {
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 17px solid #fff;
+  margin-left: 4px;
+}
+.dp-locked {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0,0,0,0.65);
+  text-align: center;
+  gap: 12px;
+}
+.dp-lock-icon { font-size: 28px; }
+.dp-lock-text {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 13px;
+  color: rgba(232,220,200,0.8);
+  line-height: 1.5;
+}
+.dp-lock-btn {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  padding: 7px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #c9a84c, #e8c96a);
+  color: #0d0d0a;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.dp-meta {
+  padding: 24px 32px 0;
+}
+.dp-universe-badge {
+  display: inline-block;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 2px;
+  margin-bottom: 12px;
+  color: #fff;
+}
+.dp-char-name {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #c9a84c;
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+.dp-dates {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 15px;
+  color: rgba(232,220,200,0.55);
+}
+.dp-divider {
+  border: none;
+  border-top: 1px solid rgba(201,168,76,0.15);
+  margin: 20px 32px;
+}
+.dp-section { padding: 0 32px; }
+.dp-section-label {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(201,168,76,0.7);
+  margin-bottom: 12px;
+}
+.dp-bio {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1.75;
+  color: rgba(232,220,200,0.8);
+}
+.dp-also-track {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.dp-also-track::-webkit-scrollbar { display: none; }
+.dp-also-track { -ms-overflow-style: none; scrollbar-width: none; }
+.dp-also-card {
+  flex-shrink: 0;
+  width: 80px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.dp-also-card:hover { opacity: 0.8; }
+.dp-also-img {
+  width: 80px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 3px;
+  background: #1a1a16;
+}
+.dp-also-name {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: rgba(232,220,200,0.65);
+  margin-top: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+.dp-bottom-pad { height: 32px; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .hn { padding: 0 20px; }
+  .hn-links { display: none; }
+  .hh-content { padding: 0 24px 60px; }
+  .hub { padding: 40px 20px 28px; }
+  .hs { padding: 0 20px 36px; }
+  .hsep { margin: 20px 20px 36px; }
+  .hfooter { padding: 36px 20px; }
+  .htk { padding: 22px 24px; }
+  .dp-meta { padding: 20px 20px 0; }
+  .dp-section { padding: 0 20px; }
+  .dp-divider { margin: 16px 20px; }
+  .dp-char-name { font-size: 22px; }
+}
+`;
+
+/* ─────────────────────────────────────────────
+   CHARACTER CARD COMPONENT
+───────────────────────────────────────────── */
+function CharCard({ char, onClick }) {
+  return (
+    <div className="hc" onClick={() => onClick(char)}>
+      <div className="hc-portrait">
+        <img
+          className="hc-img"
+          src={char.img}
+          alt={char.name}
+          loading="lazy"
+        />
+        <div className="hc-overlay">
+          <span className="hc-overlay-text">Regarder</span>
+        </div>
+        <div className="hc-badges">
+          {char.isNew && <span className="hc-badge-new">Nouveau</span>}
+          {char.is_premium && <span className="hc-badge-lock">🔒</span>}
+        </div>
+        <span className="hc-duration">{char.duration}</span>
+      </div>
+      <div className="hc-info">
+        <div className="hc-name">{char.name}</div>
+        <div className="hc-dates">{char.dates}</div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   CHARACTER ROW COMPONENT
+───────────────────────────────────────────── */
+function CharRow({ label, emoji, characters, onSelect, accentColor }) {
+  if (!characters || characters.length === 0) return null;
+  return (
+    <div className="hs">
+      <div
+        className="hs-head universe-bar"
+        style={{ '--ucolor': accentColor || '#c9a84c' }}
+      >
+        {emoji && <span className="hs-emoji">{emoji}</span>}
+        <h2 className="hs-title">{label}</h2>
+      </div>
+      <div className="hs-track">
+        {characters.map(char => (
+          <CharCard key={char.id} char={char} onClick={onSelect} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   DETAIL PANEL COMPONENT
+───────────────────────────────────────────── */
+function DetailPanel({ char, onClose, onSelect, isPremium }) {
+  const univColor = UNIVERSE_COLORS[char.universe] || '#c9a84c';
+  const univConfig = UNIVERSES.find(u => u.id === char.universe);
+  const sameUniverse = CHARACTERS.filter(
+    c => c.universe === char.universe && c.id !== char.id
+  ).slice(0, 5);
+
+  const handleKey = useCallback(
+    e => { if (e.key === 'Escape') onClose(); },
+    [onClose]
+  );
 
   useEffect(() => {
-    const esc = e => { if (e.key === 'Escape') onClose(); };
-    window.addEventListener('keydown', esc);
-    return () => window.removeEventListener('keydown', esc);
-  }, [onClose]);
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [handleKey]);
+
+  const showLocked = char.is_premium && !isPremium;
 
   return (
-    <div className="dp-overlay" onClick={onClose}>
-      <div className="dp-panel" onClick={e => e.stopPropagation()}>
+    <div className="dp-overlay" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="dp-panel">
         <button className="dp-close" onClick={onClose}>✕</button>
 
-        <div className="dp-video-head">
-          <div className="dp-short">
-            <img className="dp-short-img" src={video.img} alt={video.titre} />
-            <div className="dp-short-play" style={{ background: da.accent }}>
-              <div className="dp-video-tri" />
-            </div>
-          </div>
-        </div>
-
-        <div className="dp-meta">
-          <div className="dp-cat-badge" style={{ color: da.accent, borderColor: `${da.accent}55`, background: `${da.accent}18` }}>
-            {vertical.titre}
-          </div>
-          <div className="dp-name" style={{ color: da.titleColor }}>{video.titre}</div>
-          <div className="dp-epoque">{video.epoque}</div>
-        </div>
-
-        <div className="dp-body">
-          <div className="dp-divider" />
-          <div className="dp-section-title" style={{ color: da.accent }}>Biographie</div>
-          <p className="dp-bio">{video.bio}</p>
-        </div>
-
-        {suggestions.length > 0 && (
-          <div className="dp-sugg">
-            <div className="dp-divider" />
-            <div className="dp-section-title" style={{ color: da.accent }}>Vous aimerez aussi</div>
-            <div className="dp-sugg-row">
-              {suggestions.map(s => (
-                <div key={s.id} className="dp-sugg-card" onClick={() => onSelect(s)}>
-                  <div className="dp-sugg-img-wrap">
-                    <img className="dp-sugg-img" src={s.img} alt={s.titre} loading="lazy" />
-                  </div>
-                  <div className="dp-sugg-name">{s.titre}</div>
-                  <div className="dp-sugg-epoque">{s.epoque}</div>
+        {/* Video section */}
+        <div className="dp-video-wrap">
+          <div className="dp-video">
+            <img className="dp-video-img" src={char.img} alt={char.name} />
+            {showLocked ? (
+              <div className="dp-locked">
+                <span className="dp-lock-icon">🔒</span>
+                <p className="dp-lock-text">Débloquer avec le Pass Premium — 5€/mois</p>
+                <button className="dp-lock-btn">Devenir Premium</button>
+              </div>
+            ) : (
+              <div className="dp-play-btn">
+                <div className="dp-play-circle" style={{ borderColor: univColor }}>
+                  <div className="dp-play-triangle" style={{ borderLeftColor: univColor }} />
                 </div>
-              ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Meta */}
+        <div className="dp-meta">
+          <span
+            className="dp-universe-badge"
+            style={{ background: univColor }}
+          >
+            {univConfig ? univConfig.name : char.universe}
+          </span>
+          <div className="dp-char-name">{char.name}</div>
+          <div className="dp-dates">{char.dates}</div>
+        </div>
+
+        <hr className="dp-divider" />
+
+        {/* Bio */}
+        <div className="dp-section">
+          <div className="dp-section-label">Biographie</div>
+          <p className="dp-bio">{char.bio}</p>
+        </div>
+
+        {sameUniverse.length > 0 && (
+          <>
+            <hr className="dp-divider" />
+            <div className="dp-section">
+              <div className="dp-section-label">Vous aimerez aussi</div>
+              <div className="dp-also-track">
+                {sameUniverse.map(c => (
+                  <div
+                    key={c.id}
+                    className="dp-also-card"
+                    onClick={() => onSelect(c)}
+                  >
+                    <img
+                      className="dp-also-img"
+                      src={c.img}
+                      alt={c.name}
+                      loading="lazy"
+                    />
+                    <div className="dp-also-name">{c.name}</div>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          </>
         )}
+
+        <div className="dp-bottom-pad" />
       </div>
     </div>
   );
 }
 
-// ── VIDEO CARD ────────────────────────────────────────────────────────────────
-
-function VideoCard({ video, accent, onSelect }) {
+/* ─────────────────────────────────────────────
+   TIKTOK ICON SVG
+───────────────────────────────────────────── */
+function TikTokIcon() {
   return (
-    <div className="cc" onClick={() => onSelect(video)}>
-      <div className="cc-inner">
-        <div className="cc-top-bar" style={{ background: accent }} />
-        <img className="cc-img" src={video.img} alt={video.titre} loading="lazy" />
-        <div className="cc-grad" />
-        <div className="cc-tint" style={{ background: accent }} />
-        {video.isNew && <div className="cc-new">Nouveau</div>}
-        <div className="cc-dur">{video.duration}</div>
-        <div className="cc-play"><div className="cc-play-tri" /></div>
-        <div className="cc-info">
-          <div className="cc-name">{video.titre}</div>
-          <div className="cc-desc">{video.desc}</div>
-        </div>
-      </div>
-    </div>
+    <svg
+      width="32"
+      height="32"
+      viewBox="0 0 32 32"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <path
+        d="M21.5 2h-3.8v19.1a3.7 3.7 0 0 1-3.7 3.7 3.7 3.7 0 0 1-3.7-3.7 3.7 3.7 0 0 1 3.7-3.7c.36 0 .7.05 1.03.14V13.6a7.55 7.55 0 0 0-1.03-.07 7.5 7.5 0 0 0-7.5 7.5 7.5 7.5 0 0 0 7.5 7.5 7.5 7.5 0 0 0 7.5-7.5V11.4a11.1 11.1 0 0 0 6.5 2.1V9.7A7.3 7.3 0 0 1 21.5 2Z"
+        fill="white"
+      />
+    </svg>
   );
 }
 
-// ── CATEGORY ROW ──────────────────────────────────────────────────────────────
-
-function CategoryRow({ vertical, onSelect }) {
-  const scrollRef = useRef(null);
-  const da = DA[vertical.id];
-  const scroll = dir => scrollRef.current?.scrollBy({ left: dir * 600, behavior: 'smooth' });
-
-  return (
-    <div className="cr">
-      <div className="cr-head">
-        <div className="cr-left">
-          <div className="cr-accent" style={{ background: `linear-gradient(to bottom,${da.accent},transparent)` }} />
-          <div>
-            <span className="cr-title">{vertical.titre}</span>
-            <span className="cr-sub">{vertical.subtitle}</span>
-          </div>
-        </div>
-        <button className="cr-voir" style={{ color: da.accent, borderColor: `${da.accent}44` }}>
-          Voir tout ›
-        </button>
-      </div>
-      <div className="cr-scroll-wrap">
-        <div className="cr-fade l" style={{ background: `linear-gradient(to right,${da.bg},transparent)` }} />
-        <button className="cr-arrow l" onClick={() => scroll(-1)}>‹</button>
-        <div className="cr-scroll" ref={scrollRef}>
-          {vertical.videos.map(v => <VideoCard key={v.id} video={v} accent={da.accent} onSelect={onSelect} />)}
-        </div>
-        <button className="cr-arrow r" onClick={() => scroll(1)}>›</button>
-        <div className="cr-fade r" style={{ background: `linear-gradient(to left,${da.bg},transparent)` }} />
-      </div>
-    </div>
-  );
-}
-
-// ── SECTION BLOCK ─────────────────────────────────────────────────────────────
-
-function SectionBlock({ vertical, onSelect }) {
-  const da = DA[vertical.id];
-  return (
-    <section className="cs" style={{ background: da.bg }}>
-      {da.bgImg && <div className="cs-bg-img" style={{ backgroundImage: `url(${da.bgImg})` }} />}
-      <div className="cs-bg-pattern" style={{ backgroundImage: da.pattern, position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none' }} />
-      <div className="cs-bg-glow" style={{ background: da.glow }} />
-      <div className="cs-fade-t" style={{ background: `linear-gradient(to bottom,#09090F,transparent)` }} />
-      <div className="cs-fade-b" style={{ background: `linear-gradient(to top,#09090F,transparent)` }} />
-
-      <div className="cs-inner">
-        <div className="cs-header">
-          <div className="cs-watermark" style={{ color: `${da.accent}18` }}>{da.watermark}</div>
-          <div className="cs-header-label" style={{ color: da.accent }}>{da.label}</div>
-          <div className="cs-header-title" style={{ color: da.titleColor }}>{vertical.titre}</div>
-          <div className="cs-header-sub">{vertical.subtitle}</div>
-          <div className="cs-header-line" style={{ background: `linear-gradient(to right,${da.accent}66,transparent)` }} />
-        </div>
-
-        <CategoryRow vertical={vertical} onSelect={onSelect} />
-      </div>
-    </section>
-  );
-}
-
-// ── MYTHOLOGIE PORTAL ─────────────────────────────────────────────────────────
-
-
-// ── PAGE ──────────────────────────────────────────────────────────────────────
-
-export default function CataloguePage({ user }) {
+/* ─────────────────────────────────────────────
+   MAIN COMPONENT
+───────────────────────────────────────────── */
+export default function CataloguePage({ user, profile }) {
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const [selected, setSelected] = useState(null);
 
+  const isPremium = profile?.is_premium === true;
+
   useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', fn, { passive: true });
-    return () => window.removeEventListener('scroll', fn);
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const featured = VERTICALS[0];
+  const featured = CHARACTERS.find(c => c.id === 'jules-cesar');
 
   return (
-    <div style={{ background: '#09090F', minHeight: '100vh' }}>
+    <div style={{ background: '#0d0d0a', minHeight: '100vh' }}>
       <style>{styles}</style>
 
-      <nav className={`cn ${scrolled ? 'scrolled' : ''}`}>
-        <span style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
-          <AnachronaLogo size={38} />
-        </span>
-        <ul className="cn-links">
-          <li><a className="active">Histoire</a></li>
+      {/* NAV */}
+      <nav className={`hn${scrolled ? ' scrolled' : ''}`}>
+        <div className="hn-logo" onClick={() => navigate('/')}>
+          <AnachronaLogo />
+        </div>
+        <ul className="hn-links">
+          <li className="active">Histoire</li>
+          <li>Civilisations</li>
+          <li>Batailles</li>
+          <li>Ma Liste</li>
         </ul>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <button className="cn-myth-btn" onClick={() => navigate('/mythologie')}>✦ Mythologie</button>
-          <button className="cn-cta" onClick={() => navigate('/login')}>
+        <div className="hn-right">
+          <button className="hn-btn-myth" onClick={() => navigate('/mythologie')}>
+            ✦ Mythologie
+          </button>
+          <button className="hn-btn-premium" onClick={() => navigate(user ? '/compte' : '/premium')}>
             {user ? 'Mon Compte' : 'Devenir Premium'}
           </button>
         </div>
       </nav>
 
       {/* HERO */}
-      <div className="ch">
-        <div className="ch-logo-bg">
-          <img src="/Anachrona_logo.png" alt="" />
-        </div>
-        <div className="ch-logo-glow" />
-        <div className="ch-grad" />
-        <div className="ch-content">
-          <div className="ch-badge">Rome · À la une</div>
-          <h1 className="ch-title">Jules César</h1>
-          <div className="ch-series">Rome · L'Empire Éternel</div>
-          <p className="ch-desc">{featured.heroDesc}</p>
-          <div className="ch-btns">
-            <button className="ch-btn-play" onClick={() => setSelected({ video: featured.videos[0], vertical: featured })}>
-              <div className="ch-btn-play-tri" /> Regarder
+      <section className="hh">
+        <div
+          className="hh-bg"
+          style={{ backgroundImage: `url(${featured.heroImg})` }}
+        />
+        <div className="hh-grad" />
+        <div className="hh-content">
+          <span className="hh-badge">ROME · À LA UNE</span>
+          <h1 className="hh-title">Jules César</h1>
+          <p className="hh-sub">
+            Général, dictateur, dieu vivant — l'homme qui mit fin à la République romaine.
+          </p>
+          <div className="hh-actions">
+            <button className="hh-btn-watch" onClick={() => setSelected(featured)}>
+              ▶ REGARDER
             </button>
-            <button className="ch-btn-out">+ Ma liste</button>
+            <button className="hh-btn-list">+ MA LISTE</button>
           </div>
         </div>
+      </section>
 
-      </div>
+      {/* UNIVERSE BAND */}
+      <section className="hub">
+        <p className="hub-label">Les Univers</p>
+        <div className="hub-track">
+          {UNIVERSES.map(u => (
+            <div className="hub-item" key={u.id}>
+              <div
+                className="hub-circle"
+                style={{
+                  background: `radial-gradient(circle at 35% 35%, ${u.color}cc, ${u.color}55)`,
+                  boxShadow: `inset 0 0 0 2px ${u.color}33`,
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = u.color;
+                  e.currentTarget.style.boxShadow = `0 0 18px ${u.color}55, inset 0 0 0 2px ${u.color}99`;
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = 'transparent';
+                  e.currentTarget.style.boxShadow = `inset 0 0 0 2px ${u.color}33`;
+                }}
+              >
+                {u.icon}
+              </div>
+              <span className="hub-name">{u.name}</span>
+            </div>
+          ))}
+        </div>
+      </section>
 
-      {/* 6 THEMED SECTIONS */}
-      {VERTICALS.map(v => (
-        <SectionBlock key={v.id} vertical={v} onSelect={video => setSelected({ video, vertical: v })} />
-      ))}
+      {/* EDITORIAL ROWS */}
+      {EDITORIAL_ROWS.map(row => {
+        const chars = CHARACTERS.filter(row.filter);
+        return (
+          <CharRow
+            key={row.id}
+            label={row.label}
+            emoji={row.emoji}
+            characters={chars}
+            onSelect={setSelected}
+            accentColor="#c9a84c"
+          />
+        );
+      })}
 
+      {/* SEPARATOR */}
+      <hr className="hsep" />
+
+      {/* UNIVERSE ROWS */}
+      {UNIVERSES.map(u => {
+        const chars = CHARACTERS.filter(c => c.universe === u.id);
+        if (chars.length === 0) return null;
+        return (
+          <CharRow
+            key={u.id}
+            label={u.name}
+            emoji={null}
+            characters={chars}
+            onSelect={setSelected}
+            accentColor={u.color}
+          />
+        );
+      })}
 
       {/* FOOTER */}
-      <div className="cfoot">
-        <div className="cfoot-line" />
-        <span className="cfoot-logo" onClick={() => navigate('/')}>
-          <AnachronaLogo size={30} />
-        </span>
-        <div className="cfoot-line r" />
+      <footer className="hfooter">
+        <div onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
+          <AnachronaLogo />
+        </div>
+        <p className="hfooter-tagline">L'Histoire vivante, à portée de main.</p>
+        <p className="hfooter-copy">© 2026 Anachrona — Tous droits réservés</p>
+      </footer>
+
+      {/* TIKTOK FOOTER */}
+      <div className="htk">
+        <div className="htk-left">
+          <TikTokIcon />
+          <div className="htk-text">
+            <h3>@anachrona.fr</h3>
+            <p>Découvrez l'Histoire en 60 secondes</p>
+          </div>
+        </div>
+        <a
+          href="https://www.tiktok.com/@anachrona.fr"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="htk-btn"
+        >
+          Suivre sur TikTok
+        </a>
       </div>
 
       {/* DETAIL PANEL */}
       {selected && (
         <DetailPanel
-          video={selected.video}
-          vertical={selected.vertical}
+          char={selected}
           onClose={() => setSelected(null)}
-          onSelect={v => setSelected({ video: v, vertical: selected.vertical })}
+          onSelect={setSelected}
+          isPremium={isPremium}
         />
       )}
     </div>
