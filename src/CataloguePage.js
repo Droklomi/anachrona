@@ -159,7 +159,8 @@ const styles = `
   .cfoot-logo { cursor:pointer; opacity:.6; transition:opacity .3s; }
   .cfoot-logo:hover { opacity:1; }
 
-  @media(max-width:768px) { .cn-links{display:none} .ch-title{font-size:clamp(2rem,9vw,3.2rem)} .cc{width:132px} }
+  .cn-mobile-myth { display:none; }
+  @media(max-width:768px) { .cn-links{display:none} .ch-title{font-size:clamp(2rem,9vw,3.2rem)} .cc{width:132px} .cn-mobile-myth{display:flex;align-items:center;} }
 `;
 
 // ── DA CONFIG ─────────────────────────────────────────────────────────────────
@@ -472,9 +473,12 @@ export default function CataloguePage({ user }) {
           <li><a className="active">Histoire</a></li>
           <li><a onClick={() => navigate('/mythologie')} style={{ cursor: 'pointer' }}>Mythologie</a></li>
         </ul>
-        <button className="cn-cta" onClick={() => navigate('/login')}>
-          {user ? 'Mon Compte' : 'Devenir Premium'}
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <a className="cn-mobile-myth" onClick={() => navigate('/mythologie')} style={{ cursor: 'pointer', fontFamily: "'Cinzel',serif", fontSize: '.58rem', letterSpacing: '.22em', textTransform: 'uppercase', color: 'rgba(245,240,232,.6)' }}>Mythologie</a>
+          <button className="cn-cta" onClick={() => navigate('/login')}>
+            {user ? 'Mon Compte' : 'Devenir Premium'}
+          </button>
+        </div>
       </nav>
 
       {/* HERO */}
