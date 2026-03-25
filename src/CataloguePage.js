@@ -147,9 +147,9 @@ body::after {
   flex-shrink: 0;
 }
 .hub-circle {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
+  width: 160px;
+  height: 56px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -157,24 +157,15 @@ body::after {
   font-size: 11px;
   font-weight: 700;
   color: #fff;
-  letter-spacing: 0.08em;
-  border: 2px solid transparent;
-  transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+  letter-spacing: 0.1em;
+  border: 1px solid transparent;
+  transition: border-color 0.3s, transform 0.2s, box-shadow 0.3s;
   text-align: center;
-  line-height: 1.3;
-  padding: 8px;
+  text-transform: uppercase;
+  padding: 0 12px;
 }
 .hub-item:hover .hub-circle {
-  transform: scale(1.08);
-}
-.hub-name {
-  font-family: 'Cinzel', serif;
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  color: rgba(232,220,200,0.75);
-  text-align: center;
-  max-width: 90px;
-  line-height: 1.3;
+  transform: translateY(-2px);
 }
 
 /* CHARACTER ROWS */
@@ -853,9 +844,8 @@ export default function CataloguePage({ user, profile }) {
                   e.currentTarget.style.boxShadow = `inset 0 0 0 2px ${u.color}33`;
                 }}
               >
-                {u.icon}
+                {u.name}
               </div>
-              <span className="hub-name">{u.name}</span>
             </div>
           ))}
         </div>
