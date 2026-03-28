@@ -610,7 +610,6 @@ body::after {
    CHARACTER CARD COMPONENT
 ───────────────────────────────────────────── */
 function CharCard({ char, onClick }) {
-  const univColor = UNIVERSE_COLORS[char.universe] || '#e8dcc8';
   return (
     <div className="hc" onClick={() => onClick(char)}>
       <div className="hc-portrait">
@@ -625,7 +624,7 @@ function CharCard({ char, onClick }) {
         <span className="hc-duration">{char.duration}</span>
       </div>
       <div className="hc-info">
-        <div className="hc-name" style={{ color: univColor }}>{char.name}</div>
+        <div className="hc-name">{char.name}</div>
         <div className="hc-dates">{char.dates}</div>
       </div>
     </div>
