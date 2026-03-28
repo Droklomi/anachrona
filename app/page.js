@@ -610,7 +610,7 @@ body::after {
    CHARACTER CARD COMPONENT
 ───────────────────────────────────────────── */
 function CharCard({ char, onClick }) {
-  const frameColor = UNIVERSE_COLORS[char.universe] || '#888';
+  const univColor = UNIVERSE_COLORS[char.universe] || '#e8dcc8';
   return (
     <div className="hc" onClick={() => onClick(char)}>
       <div className="hc-portrait">
@@ -623,17 +623,9 @@ function CharCard({ char, onClick }) {
           {char.is_premium && <span className="hc-badge-lock">🔒</span>}
         </div>
         <span className="hc-duration">{char.duration}</span>
-        <div style={{
-          position: 'absolute',
-          inset: 0,
-          border: `3px solid ${frameColor}`,
-          borderRadius: '4px',
-          pointerEvents: 'none',
-          zIndex: 10,
-        }} />
       </div>
       <div className="hc-info">
-        <div className="hc-name">{char.name}</div>
+        <div className="hc-name" style={{ color: univColor }}>{char.name}</div>
         <div className="hc-dates">{char.dates}</div>
       </div>
     </div>
