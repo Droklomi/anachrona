@@ -1,4 +1,4 @@
-const CACHE = 'anachrona-v1';
+const CACHE = 'anachrona-v3';
 
 self.addEventListener('install', () => self.skipWaiting());
 
